@@ -6,6 +6,18 @@
 
 This repo holds a bear named **Siphar** which has some scripts for immediately setting up an express project based on this [template](https://github.com/Shivansh-Khunger/template_express_pino).
 
+This template includes the following key components:
+
+- **[Express](https://www.npmjs.com/package/express)**: A fast and flexible Node.js web application framework.
+
+- **[Pino](https://www.npmjs.com/package/pino)**: A low-overhead, high-speed Node.js logger. It also has sister packages, [pino-pretty](https://www.npmjs.com/package/pino-pretty) for pretty-printing logs, and [pino-http](https://www.npmjs.com/package/pino-http) for HTTP logging.
+
+- **[TypeScript](https://www.npmjs.com/package/typescript)**: A strongly typed superset of JavaScript.
+
+- **[Dotenvx](https://github.com/dotenvx/dotenvx)**: An enhanced version of `dotenv` that supports multiple `.env` files and runtime variable replacement. It provides a flexible way to manage environment variables.
+
+- **[tsx](https://www.npmjs.com/package/tsx)**: A tool that restarts your TypeScript application when source files change.
+
 **Siphar** follows the saying -
 
 > If you can't buy something you want, build it.
@@ -55,7 +67,7 @@ Here's an example of how to use these options:
 
 ```bash
 curl -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/with_args.py | python - --dir 'my_project' --biome --git --shell 'zsh'
-````
+```
 
 > **Note:** The command above will initialize biome as linter & formatter, but it will not initialize a git repository. This command will add the alias to the default config of [**oh-my-zsh**](https://ohmyz.sh/).
 
