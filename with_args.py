@@ -39,7 +39,7 @@ parser.add_argument('--dir', type=str, default='template_express_pino',
                     help='Name for the new project directory')
 
 parser.add_argument('--alias',  action='store_false',
-                    help="Add alias 'mkexp' to run this script from anywhere in Powershell")
+                    help="Add alias 'mkexp' to run this script from any location in your command line interface")
 
 # Parse the arguments
 args = parser.parse_args()
@@ -239,7 +239,7 @@ def handle_alias_save():
 
             # pylint: disable=line-too-long
             # disable for only one line
-        ps1_url = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/mainwin_update_profile.ps1"
+        ps1_url = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/win_update_profile.ps1"
 
         # Download the PowerShell script and save it in the USER_BIN_DIR
         urllib.request.urlretrieve(ps1_url, USER_BIN_DIR + ps1_script_name)
