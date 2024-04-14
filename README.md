@@ -19,7 +19,7 @@ If you want an Express project set up for you in a matter of seconds, copy and p
 So the command for Windows users would be:
 
 ```bash
-curl.exe -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/with_args.py | python - --dir 'name of the directory'
+curl -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/with_args.py | python - --dir 'name of the directory'
 ```
 
 ### Options
