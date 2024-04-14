@@ -15,26 +15,30 @@ import argparse
 import platform
 import urllib.request
 from pathlib import Path
+from threading import Thread
 from shutil import rmtree
 
-
-OS_NAME = platform.system()
+# Constants
+OS_NAME = platform.system()  # Get OS name
+IF_WIN = (OS_NAME == 'Windows')  # Check if OS is Windows
+USER_BIN_DIR = str(Path.home())+'/bin_scripts'  # Path to bin_scripts
+CLONE_CMD = "git clone https://github.com/Shivansh-Khunger/template_express_pino"  # Clone command
 
 # Create the parser
 parser = argparse.ArgumentParser(
     description='Create a new project based on the template_express_pino repository.')
 
 # Add the arguments
-parser.add_argument('--biome', type=bool, default=False,
-                    help="Use biome.js as linter & formatter haven't heard about it visit https://biomejs.dev/")
+parser.add_argument('--biome', action='store_true',
+                    help="Use biome.js as linter & formatter haven't heard of it visit https://biomejs.dev/")
 
-parser.add_argument('--git', type=bool, default=True,
+parser.add_argument('--git', action='store_false',
                     help='Initialize a git repo in the new project')
 
 parser.add_argument('--dir', type=str, default='template_express_pino',
                     help='Name for the new project directory')
 
-parser.add_argument('--alias', type=bool, default=True,
+parser.add_argument('--alias',  action='store_false',
                     help="Add alias 'mkexp' to run this script from anywhere in Powershell")
 
 # Parse the arguments
@@ -42,12 +46,28 @@ args = parser.parse_args()
 
 # Define new project directory and clone command
 new_project_dir = os.getcwd() + f'/{args.dir}'
-CLONE_CMD = "git clone https://github.com/Shivansh-Khunger/template_express_pino"
 
 # Execute clone command and rename the cloned directory
 os.system(CLONE_CMD)
 os.rename(os.getcwd() + '/template_express_pino',
           new_project_dir)
+
+
+# Define a function to install dependencies
+def install_dependencies():
+    """
+    Installs npm dependencies in the current project directory.
+
+    This function runs the command 'npm i' in a subprocess, which installs the npm dependencies.
+    It uses the 'shell' argument set to IF_WIN (which should be a boolean indicating if the OS is Windows),
+    and the 'cwd' argument set to new_project_dir (which should be the directory of the new project).
+    If the subprocess call exits with a non-zero code, a CalledProcessError will be raised (because 'check' is True).
+    """
+    subprocess.run(['npm', 'i'], shell=IF_WIN, cwd=new_project_dir, check=True)
+
+
+# Create a new thread with install_dependencies as the target function and start it
+Thread(target=install_dependencies).start()
 
 
 # Define function to remove biome
@@ -146,6 +166,8 @@ def add_env_prod():
         # Close the file
         prod_file.close()
 
+# Define function to intialise an empty git repository
+
 
 def add_git():
     """
@@ -155,8 +177,110 @@ def add_git():
     The 'cwd' parameter is used to specify the new project directory as the current working directory for the command.
     """
     # Initialize a new Git repository in the new project directory
-    subprocess.run(['git', 'init'], shell=True,
-                   cwd=new_project_dir, check=True)
+    subprocess.run(['git', 'init'],
+                   cwd=new_project_dir, shell=IF_WIN, check=True)
+
+
+# Define function to save the the 'without_args.py' in user's machine
+def save_without_args_script():
+    """
+    This function checks if a specific directory (USER_BIN_DIR) exists in the user's home directory.
+    If the directory does not exist, it creates one.
+
+    It then checks if a specific Python script (without_args.py) exists in that directory.
+    If the script does not exist, it downloads the script from a given URL and saves it in the directory.
+    If the script already exists, it removes the old script before downloading the new one.
+    """
+    # Check if the USER_BIN_DIR directory exists
+    if not os.path.isdir(USER_BIN_DIR):
+        # If not, create the directory in the user's home directory
+        subprocess.run(['mkdir', 'bin_scripts'], shell=IF_WIN, cwd=Path.home(), check=True)
+
+    script_name = "/without_args.py"
+
+    # Check if the script already exists in the directory
+    if os.path.exists(USER_BIN_DIR + script_name):
+        # If it does, remove the old script
+        os.remove(USER_BIN_DIR + script_name)
+
+    # URL of the Python script to download
+    script_url = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/without_args.py"
+
+    # Download the Python script from the URL and save it in the USER_BIN_DIR
+    urllib.request.urlretrieve(script_url, USER_BIN_DIR + script_name)
+
+    # Handle the alias saving process
+    handle_alias_save()
+
+
+# Define function to add the alias 'mkexp' for exectuing 'without_args.py'
+def handle_alias_save():
+    """
+    This function handles the process of saving an alias for the Python script.
+
+    If the operating system is Windows, it downloads a PowerShell script, runs it, and then deletes it.
+    If the operating system is macOS or Linux, it downloads a Bash script, runs it, and then deletes it.
+    """
+    # If the operating system is Windows
+    if (IF_WIN):
+        # Check if the directory exists
+        if (not os.path.isdir(USER_BIN_DIR)):
+            # If not, create the directory
+            subprocess.run(['mkdir', 'bin_scripts'], shell=True, cwd=Path.home(), check=True)
+
+        # Name of the PowerShell script to download
+        ps1_script_name = '/win_update_profile.ps1'
+
+        # If the PowerShell script already exists, remove it
+        if (os.path.exists(USER_BIN_DIR + ps1_script_name)):
+            os.remove(USER_BIN_DIR + ps1_script_name)
+
+        # URL of the PowerShell script to download
+
+            # pylint: disable=line-too-long
+            # disable for only one line
+        ps1_url = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/mainwin_update_profile.ps1"
+
+        # Download the PowerShell script and save it in the USER_BIN_DIR
+        urllib.request.urlretrieve(ps1_url, USER_BIN_DIR + ps1_script_name)
+
+        # Run the PowerShell script
+        subprocess.run(['powershell.exe', '-ExecutionPolicy', 'Unrestricted',
+                        '.' + ps1_script_name], shell=True, cwd=USER_BIN_DIR, check=True)
+
+        # Refresh the PowerShell profile
+        subprocess.run(['powershell.exe', '. $PROFILE'], shell=True, check=True)
+
+        # Delete the PowerShell script from the USER_BIN_DIR
+        os.remove(USER_BIN_DIR + ps1_script_name)
+
+    # If the operating system is macOS or Linux
+    if (OS_NAME == 'Darwin' or OS_NAME == 'Linux'):
+        # If the directory does not exist, create it
+        if (not os.path.isdir(USER_BIN_DIR)):
+            subprocess.run(['mkdir', 'bin_scripts'], cwd=Path.home(), check=True)
+
+        # Name of the Bash script to download
+        sh_script_name = '/unix_update_profile.sh'
+
+        # If the Bash script already exists, remove it
+        if (os.path.exists(USER_BIN_DIR + sh_script_name)):
+            os.remove(USER_BIN_DIR + sh_script_name)
+
+        # URL of the Bash script to download
+
+            # pylint: disable=line-too-long
+            # disable for only one line
+        sh_url = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/unix_update_profile.sh"
+
+        # Download the Bash script and save it in the USER_BIN_DIR
+        urllib.request.urlretrieve(sh_url, USER_BIN_DIR + sh_script_name)
+
+        # Run the Bash script and refresh the Bash shell
+        subprocess.run(['bash', '.' + sh_script_name, '&& exec bash'], cwd=USER_BIN_DIR, check=True)
+
+        # Delete the Bash script from the USER_BIN_DIR
+        os.remove(USER_BIN_DIR + sh_script_name)
 
 
 # Remove biome if user doesn't want it
@@ -173,89 +297,6 @@ remove_git()
 # Initialize git if user wants it
 if args.git:
     add_git()
-
-# Define the directory where the scripts will be stored
-USER_BIN_DIR = str(Path.home())+'/bin_scripts'
-
-
-# Function to download a Python script and save it in the USER_BIN_DIR
-def save_without_args_script():
-    """
-    This function checks if a specific directory exists in the user's home directory.
-    If the directory does not exist, it creates one.
-
-    It then checks if a specific Python script exists in that directory.
-    If the script does not exist, it downloads the script from a given URL and saves it in the directory.
-    """
-    # Check if the directory exists
-    if (not os.path.isdir(USER_BIN_DIR)):
-        # If not, create the directory
-        subprocess.run(['mkdir', 'bin_scripts'], shell=True, cwd=Path.home(), check=True)
-
-    if (not os.path.exists(USER_BIN_DIR + '/without_args.py')):
-        # URL of the Python script to download
-
-        # pylint: disable=line-too-long
-        # disable for only one line
-        script_url = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/without_args.py"
-
-        # Download the Python script and save it in the USER_BIN_DIR
-        urllib.request.urlretrieve(
-            script_url, USER_BIN_DIR + '/without_args.py')
-
-    handle_alias_save()
-
-
-def handle_alias_save():
-    """s"""
-    # To download a PowerShell script, run it, and then delete it
-    if (OS_NAME == 'Windows'):
-        # Check if the directory exists
-        if (not os.path.isdir(USER_BIN_DIR)):
-            # If not, create the directory
-            subprocess.run(['mkdir', 'bin_scripts'], shell=True, cwd=Path.home(), check=True)
-
-        # Name of the PowerShell script to download
-        ps1_script_name = '/win_update_profile.ps1'
-
-        if (not os.path.exists(USER_BIN_DIR + ps1_script_name)):
-            # URL of the PowerShell script to download
-
-            # pylint: disable=line-too-long
-            # disable for only one line
-            ps1_url = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/update_profile.ps1"
-
-            # Download the PowerShell script and save it in the USER_BIN_DIR
-            urllib.request.urlretrieve(ps1_url, USER_BIN_DIR + ps1_script_name)
-
-        # Run the PowerShell script
-        subprocess.run(['powershell.exe', '-ExecutionPolicy', 'Unrestricted',
-                        '.' + ps1_script_name], shell=True, cwd=USER_BIN_DIR, check=True)
-
-        subprocess.run(['powershell.exe', '. $PROFILE'], shell=True, check=True)
-        # Delete the PowerShell script from the USER_BIN_DIR
-        os.remove(USER_BIN_DIR + ps1_script_name)
-
-    if (OS_NAME == 'Darwin' or OS_NAME == 'Linux'):
-        # If not, create the directory
-        subprocess.run(['mkdir', 'bin_scripts'], shell=True, cwd=Path.home(), check=True)
-
-        # Name of the Bash script to download
-        sh_script_name = '/unix_update_profile.sh'
-
-        if (not os.path.exists(USER_BIN_DIR + sh_script_name)):
-            # URL of the Bash script to download
-
-            # pylint: disable=line-too-long
-            # disable for only one line
-            sh_url = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/update_profile.sh"
-
-            # Download the Bash script and save it in the USER_BIN_DIR
-            urllib.request.urlretrieve(sh_url, USER_BIN_DIR + sh_script_name)
-
-        subprocess.run(['bash', '.' + sh_script_name], cwd=USER_BIN_DIR, check=True)
-        # Delete the Bash script from the USER_BIN_DIR
-        os.remove(USER_BIN_DIR + sh_url)
 
 
 # If the alias argument is set to True
