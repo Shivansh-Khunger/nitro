@@ -16,11 +16,11 @@ output_help_message() {
     echo "The alias is for a Python script located at \$HOME/bin_scripts/without_args.py."
     echo -e "If no shell is specified, the script will use the bash configuration file by default. \n\
     However, if other shell configuration files are found, it will follow the order: \n\
-    1. zsh \n\
-    2. ksh \n\
-    3. csh \n\
-    4. fish \n\
-    For example, if configuration files for both 'zsh' and 'ksh' are found, zsh will be preferred."
+    1. zsh (oh my zsh): https://ohmyz.sh/\n\
+    2. ksh  (Kron-Shell): http://kornshell.com/\n\
+    3. csh  (C-Shell): https://codedocs.org/what-is/c-shell\n\
+    4. fish (Fish-Shell): https://fishshell.com/\n\
+    For example, if configuration files for both 'zsh' and 'ksh' are found, 'zsh' will be preferred."
 }
 
 # Parse command-line options
@@ -53,7 +53,7 @@ while getopts "s:h-:" OPTION; do
             ;;
         *)
             # If the argument is anything else, print an error message and exit
-            echo "Invalid option. Please refer to the help (-h | --help) for more information."            
+            echo "Invalid option. Please refer to the help (-h | --help) for more information."
             exit 1
             ;;
         esac
@@ -88,10 +88,11 @@ while getopts "s:h-:" OPTION; do
         ;;
     esac
 done
+
 # Default shell file is bash
 SHELL_FILE=~/.bashrc
-# Define alias command
-ALIAS_COMMAND=("\nalias" "mkexp='python3 $HOME/bin_scripts/without_args.py")
+# Define alias command and its str
+ALIAS_COMMAND="alias mkexp='python3 $HOME/bin_scripts/without_args.py'"
 
 # Define paths for other shell files
 ZSH_FILE=~/.zshrc
@@ -100,50 +101,72 @@ CSH_FILE=~/.cshrc
 FISH_FILE=~/.config/fish/config.fish
 
 # Update SHELL_FILE if a specific shell was specified
+STUCK_MESSAGE="If you're stuck, run '-h | --help' for help."
+
 case "${USER_SHELL}" in
 zsh)
-    SHELL_FILE=$ZSH_FILE
+    if test -f $ZSH_FILE; then
+        SHELL_FILE=$ZSH_FILE
+    else
+        echo "The Zsh configuration file does not exist."
+        echo "$STUCK_MESSAGE"
+        exit 1
+    fi
     ;;
 ksh)
-    SHELL_FILE=$KSH_FILE
+    if test -f $KSH_FILE; then
+        SHELL_FILE=$KSH_FILE
+    else
+        echo "The Korn-Shell configuration file does not exist."
+        echo $"$STUCK_MESSAGE"
+        exit 1
+    fi
     ;;
 csh)
-    SHELL_FILE=$CSH_FILE
+    if test -f $CSH_FILE; then
+        SHELL_FILE=$CSH_FILE
+    else
+        echo "The C-Shell configuration file does not exist."
+        echo "$STUCK_MESSAGE"
+        exit 1
+    fi
     ;;
 fsh)
-    SHELL_FILE=$FISH_FILE
+    if test -f $FISH_FILE; then
+        SHELL_FILE=$FISH_FILE
+    else
+        echo "The Fish-Shell configuration file does not exist."
+        echo "$STUCK_MESSAGE"
+        exit 1
+    fi
     ;;
-*) ;;
+"")
+    # If no specific shell was specified, use the first available shell file
+    if test -f $ZSH_FILE; then
+        SHELL_FILE=$ZSH_FILE
+    fi
+
+    if test -f $KSH_FILE; then
+        SHELL_FILE=$KSH_FILE
+    fi
+
+    if test -f $CSH_FILE; then
+        SHELL_FILE=$CSH_FILE
+    fi
+
+    if test -f $FISH_FILE; then
+        SHELL_FILE=$FISH_FILE
+    fi
+    ;;
 esac
 
-# If no specific shell was specified, use the first available shell file
-if test -f $ZSH_FILE; then
-    SHELL_FILE=$ZSH_FILE
-fi
-
-if test -f $KSH_FILE; then
-    SHELL_FILE=$KSH_FILE
-fi
-
-if test -f $CSH_FILE; then
-    SHELL_FILE=$CSH_FILE
-fi
-
-if test -f $FISH_FILE; then
-    SHELL_FILE=$FISH_FILE
-fi
-
-# Update the shell file
-echo updating $SHELL_FILE...
-
 # Check if the alias is already present
-if grep -Fxq "${ALIAS_COMMAND[@]}" $SHELL_FILE; then
-    echo Alias already is present
+if grep -Fxq "$ALIAS_COMMAND" $SHELL_FILE; then
+    # Update the shell file
+    echo updating $SHELL_FILE...
+    echo "The command/alias 'mkexp' already exists in your $SHELL_FILE."
 else
     # If not, add the alias
-    echo "${ALIAS_COMMAND[@]}" >> $SHELL_FILE
+    echo -e "$ALIAS_COMMAND" >>$SHELL_FILE
+    echo The command/alias 'mkexp' has been successfully added to your $SHELL_FILE.
 fi
-
-# Source the shell file to make the new alias available
-# shellcheck disable=SC1090
-source $SHELL_FILE
