@@ -14,8 +14,12 @@ This repo holds a bear named **Siphar** which has some scripts for immediately s
 
 If you want an Express project set up for you in a matter of seconds, copy and paste the following command into your terminal:
 
+> **Tip for Windows users:** If you're using a Windows system and the `curl` command isn't working, try using `curl.exe` instead.
+
+So the command for Windows users would be:
+
 ```bash
-curl -sL https://github.com/Shivansh-Khunger/scripts_template_express_pino/blob/main/with_args.py | python - --dir 'name of the directory'
+curl.exe -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/with_args.py | python - --dir 'name of the directory'
 ```
 
 ### Options
@@ -50,8 +54,8 @@ curl -sL https://github.com/Shivansh-Khunger/scripts_template_express_pino/blob/
 Here's an example of how to use these options:
 
 ```bash
-curl -sL https://github.com/Shivansh-Khunger/scripts_template_express_pino/blob/main/with_args.py | python - --dir 'my_project' --biome --git --shell zsh
-```
+curl -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/with_args.py | python - --dir 'my_project' --biome --git --shell 'zsh'
+````
 
 > **Note:** The command above will initialize biome as linter & formatter, but it will not initialize a git repository. This command will add the alias to the default config of [**oh-my-zsh**](https://ohmyz.sh/).
 
