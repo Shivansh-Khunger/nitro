@@ -1,10 +1,10 @@
 """
 This module provides utilities for interacting with the operating system.
 
-It includes functionality for handling files and directories (os, pathlib, shutil), 
-running subprocesses (subprocess), parsing command-line arguments (argparse), 
-and downloading content from URLs (urllib.request). It also provides access to 
-JSON functionality (json), file and directory permissions (stat), and system-specific 
+It includes functionality for handling files and directories (os, pathlib, shutil),
+running subprocesses (subprocess), parsing command-line arguments (argparse),
+and downloading content from URLs (urllib.request). It also provides access to
+JSON functionality (json), file and directory permissions (stat), and system-specific
 parameters (platform).
 """
 import os
@@ -40,6 +40,17 @@ parser.add_argument('--dir', type=str, default='template_express_pino',
 
 parser.add_argument('--alias',  action='store_false',
                     help="Add alias 'mkexp' to run this script from any location in your command line interface")
+
+parser.add_argument('--shell', type=str, default='',
+                    help='''Specify the shell (bash [Default], zsh, ksh [Korn], csh [C-Shell], or fish).
+                    Only needed if multiple shell configuration files are present.
+                    If no shell is specified, the script will use the bash configuration file by default.
+                    However, if other shell configuration files are found, it will follow the order:
+                    1. zsh (oh my zsh): https://ohmyz.sh/
+                    2. ksh  (Korn-Shell): http://kornshell.com/
+                    3. csh  (C-Shell): https://codedocs.org/what-is/c-shell
+                    4. fish (Fish-Shell): https://fishshell.com/
+                    For example, if configuration files for both 'zsh' and 'ksh' are found, 'zsh' will be preferred.''')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -275,6 +286,10 @@ def handle_alias_save():
 
         # Download the Bash script and save it in the USER_BIN_DIR
         urllib.request.urlretrieve(sh_url, USER_BIN_DIR + sh_script_name)
+
+        # Run the Bash script with prefered shell and refresh the Bash shell
+        if (not args.shell == ''):
+            subprocess.run(['bash', '.' + sh_script_name, args.shell, '&& exec bash'], cwd=USER_BIN_DIR, check=True)
 
         # Run the Bash script and refresh the Bash shell
         subprocess.run(['bash', '.' + sh_script_name, '&& exec bash'], cwd=USER_BIN_DIR, check=True)
