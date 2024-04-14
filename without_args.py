@@ -29,10 +29,10 @@ while True:
         "🔧 Do you want to use biome.js as linter & formatter? (Y/N, default is N): ")
     if (not want_biome):
         want_biome = 'n'
-    elif (want_biome.lower() == 'y'):
+    if (want_biome.lower() == 'y'):
         want_biome = True
         break
-    elif (want_biome.lower() == 'n'):
+    if (want_biome.lower() == 'n'):
         want_biome = False
         break
     else:
@@ -41,13 +41,13 @@ while True:
 # Ask user if they want to initialize a git repo in the new project
 while True:
     want_git = input(
-        '🔧 Do you want to initialize a git repo in the new project? (Y/N, default is N): ')
+        '🔧 Do you want to initialize a git repo in the new project? (Y/N, default is Y): ')
     if (not want_git):
-        want_git = 'n'
-    elif (want_git.lower() == 'y'):
+        want_git = 'y'
+    if (want_git.lower() == 'y'):
         want_git = True
         break
-    elif (want_git.lower() == 'n'):
+    if (want_git.lower() == 'n'):
         want_git = False
         break
     else:
