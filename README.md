@@ -20,18 +20,28 @@ This template includes the following key components:
 
 **Siphar** follows the saying -
 
-> If you can't buy something you want, build it.
+<blockquote style="border-left: 4px solid #0366d6; padding-left: 1em; color: #24292e; background-color: #; color: white;">
+  <b>‘If you can't buy something you want, build it.’</b>
+</blockquote>
+<br>
 
 # Usage
 
 If you want an Express project set up for you in a matter of seconds, copy and paste the following command into your terminal:
 
-> **Tip for Windows users:** If you're using a Windows system and the `curl` command isn't working, try using `curl.exe` instead.
+```bash
+curl -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/with_args.py | python - --dir 'name of the directory'
+```
+
+<blockquote style="border-left: 4px solid #0366d6; padding-left: 1em; color: #24292e; background-color: #; color: white;">
+  <strong>Tip for Windows users:</strong> If you're using a Windows system and the <code>curl</code> command isn't working, try using <code>curl.exe</code> instead. Read <a href="https://stackoverflow.com/questions/25044010/running-curl-on-64-bit-windows" style="color: #0366d6;">why is that?</a>
+</blockquote>
+<br>
 
 So the command for Windows users would be:
 
-```bash
-curl -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/with_args.py | python - --dir 'name of the directory'
+```powershell
+curl.exe -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/with_args.py | python - --dir 'name of the directory'
 ```
 
 ### Options
@@ -69,16 +79,31 @@ Here's an example of how to use these options:
 curl -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/with_args.py | python - --dir 'my_project' --biome --git --shell 'zsh'
 ```
 
-> **Note:** The command above will initialize biome as linter & formatter, but it will not initialize a git repository. This command will add the alias to the default config of [**oh-my-zsh**](https://ohmyz.sh/).
+<blockquote style="border-left: 4px solid #0366d6; padding-left: 1em; color: #24292e; background-color: #; color: white;">
+  <strong>Note:</strong> The command above will initialize biome as linter & formatter, but it will not initialize a git repository. This command will add the alias to the default config of <a href="https://ohmyz.sh/" style="color: #0366d6;">oh-my-zsh</a>.
+</blockquote>
+<br>
 
 # Additional Usage
 
 After the initial use of this script, you can simply type `mkexp` in your command line interface to invoke a sister script. This script will interactively take input from you to set up your project. This makes it even easier to quickly set up new Express projects based on the template.
 
-> **Note for Unix-based system users:** The `mkexp` alias will only work if you invoke Python by typing `python` and not `python3`. Please ensure you have the correct Python alias set up in your system.
+<blockquote style="border-left: 4px solid #0366d6; padding-left: 1em; color: #24292e; background-color: #; color: white;">
+  <strong>Note for Unix-based system users:</strong> The <code>mkexp</code> alias will only work if you invoke Python by typing <code>python</code> and not <code>python3</code>. Please ensure you have the correct Python alias set up in your system.
+  
+  <br>
+  Another workaround is you can just edit the alias set up by the script from <code>python</code> to <code>python3</code>.
+</blockquote>
+<br>
 
 # Contributing
 
-> **Note:** A detailed contributing guide will be added soon. Until then, if you want to make changes to this repository, please use your skills and common sense.
+<blockquote style="border-left: 4px solid #0366d6; padding-left: 1em; color: #24292e; background-color: #; color: white;">
+  <strong>Note:</strong> A detailed contributing guide will be added soon. Until then, if you want to make changes to this repository, please use your skills and common sense.
+</blockquote>
+<br>
 
-> **TIP:** Feel free to raise an issue or submit a pull request.
+<blockquote style="border-left: 4px solid #0366d6; padding-left: 1em; color: #24292e; background-color: #; color: white;">
+  <strong>TIP:</strong> Feel free to raise an issue or submit a pull request.
+</blockquote>
+<br>
