@@ -21,8 +21,14 @@ from shutil import rmtree
 # Constants
 OS_NAME = platform.system()  # Get OS name
 IF_WIN = (OS_NAME == 'Windows')  # Check if OS is Windows
-USER_BIN_DIR = str(Path.home())+'/bin_scripts'  # Path to bin_scripts
-CLONE_CMD = "git clone https://github.com/Shivansh-Khunger/template_express_pino"  # Clone command
+USER_BIN_DIR = str(Path.home()) + '/bin_scripts'  # Path to bin_scripts
+
+TEMPLATE_REPO_URL = "https://github.com/Shivansh-Khunger/template_express_pino" # Template URL
+REPO_URL = "https://github.com/Shivansh-Khunger/scripts_template_express_pino"  # Repository URL
+
+# Raw repository URL
+RAW_REPO_URL = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main"
+
 
 # Create the parser
 parser = argparse.ArgumentParser(
@@ -59,7 +65,7 @@ args = parser.parse_args()
 new_project_dir = os.getcwd() + f'/{args.dir}'
 
 # Execute clone command and rename the cloned directory
-os.system(CLONE_CMD)
+subprocess.run(['git', 'clone', TEMPLATE_REPO_URL], shell=IF_WIN, check=True)
 os.rename(os.getcwd() + '/template_express_pino',
           new_project_dir)
 
@@ -74,7 +80,8 @@ def install_dependencies():
     and the 'cwd' argument set to new_project_dir (which should be the directory of the new project).
     If the subprocess call exits with a non-zero code, a CalledProcessError will be raised (because 'check' is True).
     """
-    subprocess.run(['npm', 'i'], shell=IF_WIN, cwd=new_project_dir, check=True)
+    subprocess.run(['npm', 'i'], shell=IF_WIN, cwd=new_project_dir, check=True,
+                   stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
 
 # Create a new thread with install_dependencies as the target function and start it
@@ -87,29 +94,33 @@ def remove_biome():
     This function removes the 'biome.json' file and the '@biomejs/biome' dependency from the 'package.json' file.
     It also removes the first recommendation from the '.vscode/extensions.json' file in the new project directory.
     """
+    biome_path = new_project_dir + '/biome.json'
+    package_json_path = new_project_dir + '/package.json'
+    vscode_extension_recommend_path = new_project_dir + '/.vscode/extensions.json'
+
     # Remove the 'biome.json' file
-    os.remove(new_project_dir + '/biome.json')
+    os.remove(biome_path)
 
     # Open the 'package.json' file and load its JSON content
-    with open(new_project_dir+'/package.json', 'r', encoding='utf-8') as file:
+    with open(package_json_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
 
         # Remove the '@biomejs/biome' dependency
         data['devDependencies'].pop('@biomejs/biome')
 
         # Write the updated JSON data back to the 'package.json' file
-        with open(new_project_dir+'/package.json', 'w', encoding='utf-8') as file:
+        with open(package_json_path, 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4)
 
     # Open the '.vscode/extensions.json' file and load its JSON content
-    with open(new_project_dir+'/.vscode/extensions.json', 'r', encoding='utf-8') as file:
+    with open(vscode_extension_recommend_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
 
-        # Remove the first recommendation
+        # Remove the recommendation for biome's extension
         data['recommendations'].pop(0)
 
         # Write the updated JSON data back to the '.vscode/extensions.json' file
-        with open(new_project_dir+'/.vscode/extensions.json', 'w', encoding='utf-8') as file:
+        with open(vscode_extension_recommend_path, 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4)
 
 
@@ -123,10 +134,10 @@ def remove_git():
     Then it removes the entire .git directory using the rmtree function from the shutil module.
     """
     # Define the path to the .git directory
-    git_dir = new_project_dir + '/.git'
+    git_dir_path = new_project_dir + '/.git'
 
     # Walk through the .git directory
-    for root, dirs, files in os.walk(git_dir):
+    for root, dirs, files in os.walk(git_dir_path):
         # For each directory in the .git directory
         for each_dir in dirs:
             # Change the permissions to ensure the user has read, write, and execute permissions
@@ -137,7 +148,7 @@ def remove_git():
             os.chmod(os.path.join(root, file), stat.S_IRWXU)
 
     # Remove the entire .git directory
-    rmtree(git_dir)
+    rmtree(git_dir_path)
 
 
 # Define function to add .env.development file
@@ -149,8 +160,11 @@ def add_env_dev():
     variable to 'development'.
     This is typically used to indicate that the application is running in a development environment.
     """
+    env_dev_name = '/.env.development'
+    env_dev_path = new_project_dir + env_dev_name
+
     # Open the '.env.development' file in write mode
-    with open(new_project_dir+'/.env.development', 'w', encoding='utf-8') as dev_file:
+    with open(env_dev_path, 'w', encoding='utf-8') as dev_file:
         # Define the content to be written to the file
         dev_file_content = "NODE_ENV=development"
         # Write the content to the file
@@ -168,8 +182,11 @@ def add_env_prod():
     variable to 'production'.
     This is typically used to indicate that the application is running in a production environment.
     """
+    env_prod_name = '/.env.production'
+    env_prod_path = new_project_dir + env_prod_name
+
     # Open the '.env.production' file in write mode
-    with open(new_project_dir+'/.env.production', 'w', encoding='utf-8') as prod_file:
+    with open(env_prod_path, 'w', encoding='utf-8') as prod_file:
         # Define the content to be written to the file
         prod_file_content = "NODE_ENV=production"
         # Write the content to the file
@@ -177,9 +194,8 @@ def add_env_prod():
         # Close the file
         prod_file.close()
 
+
 # Define function to intialise an empty git repository
-
-
 def add_git():
     """
     This function initializes a new Git repository in the new project directory.
@@ -202,26 +218,48 @@ def save_without_args_script():
     If the script does not exist, it downloads the script from a given URL and saves it in the directory.
     If the script already exists, it removes the old script before downloading the new one.
     """
+    without_args_name = "/without_args.py"
+    without_args_path = USER_BIN_DIR + without_args_name
+    without_args_url = RAW_REPO_URL + without_args_name
+
     # Check if the USER_BIN_DIR directory exists
     if not os.path.isdir(USER_BIN_DIR):
         # If not, create the directory in the user's home directory
         subprocess.run(['mkdir', 'bin_scripts'], shell=IF_WIN, cwd=Path.home(), check=True)
 
-    script_name = "/without_args.py"
-
     # Check if the script already exists in the directory
-    if os.path.exists(USER_BIN_DIR + script_name):
+    if os.path.exists(without_args_path):
         # If it does, remove the old script
-        os.remove(USER_BIN_DIR + script_name)
-
-    # URL of the Python script to download
-    script_url = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/without_args.py"
+        os.remove(without_args_path)
 
     # Download the Python script from the URL and save it in the USER_BIN_DIR
-    urllib.request.urlretrieve(script_url, USER_BIN_DIR + script_name)
+    urllib.request.urlretrieve(without_args_url, without_args_path)
 
-    # Handle the alias saving process
-    handle_alias_save()
+
+def save_config_file():
+    """
+    This function is responsible for saving the configuration file. It first checks if the USER_BIN_DIR 
+    directory exists.
+    If it doesn't, it creates the directory in the user's home directory. 
+    Then it checks if the script already exists in the directory.
+    If it does, it removes the old script. Finally, it retrieves the configuration file from the 
+    CLOUD_CONFIG_URL and saves it to the CONFIG_PATH.
+    """
+    config_name = "/pyproject.toml"
+    config_path = USER_BIN_DIR + config_name
+    config_url = RAW_REPO_URL + config_name
+
+    # Check if the USER_BIN_DIR directory exists
+    if not os.path.isdir(USER_BIN_DIR):
+        # If not, create the directory in the user's home directory
+        subprocess.run(['mkdir', 'bin_scripts'], shell=IF_WIN, cwd=Path.home(), check=True)
+
+    # Check if the script already exists in the directory
+    if os.path.exists(config_path):
+        # If it does, remove the old config file
+        os.remove(config_path)
+
+    urllib.request.urlretrieve(config_url, config_path)
 
 
 # Define function to add the alias 'mkexp' for exectuing 'without_args.py'
@@ -239,12 +277,13 @@ def handle_alias_save():
             # If not, create the directory
             subprocess.run(['mkdir', 'bin_scripts'], shell=True, cwd=Path.home(), check=True)
 
-        # Name of the PowerShell script to download
+        # Name & Path of the PowerShell script to download
         ps1_script_name = '/win_update_profile.ps1'
+        ps1_script_path = USER_BIN_DIR + ps1_script_name
 
         # If the PowerShell script already exists, remove it
-        if (os.path.exists(USER_BIN_DIR + ps1_script_name)):
-            os.remove(USER_BIN_DIR + ps1_script_name)
+        if (os.path.exists(ps1_script_path)):
+            os.remove(ps1_script_path)
 
         # URL of the PowerShell script to download
 
@@ -253,7 +292,7 @@ def handle_alias_save():
         ps1_url = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/win_update_profile.ps1"
 
         # Download the PowerShell script and save it in the USER_BIN_DIR
-        urllib.request.urlretrieve(ps1_url, USER_BIN_DIR + ps1_script_name)
+        urllib.request.urlretrieve(ps1_url, ps1_script_path)
 
         # Run the PowerShell script
         subprocess.run(['powershell.exe', '-ExecutionPolicy', 'Unrestricted',
@@ -263,7 +302,7 @@ def handle_alias_save():
         subprocess.run(['powershell.exe', '. $PROFILE'], shell=True, check=True)
 
         # Delete the PowerShell script from the USER_BIN_DIR
-        os.remove(USER_BIN_DIR + ps1_script_name)
+        os.remove(ps1_script_path)
 
     # If the operating system is macOS or Linux
     if (OS_NAME == 'Darwin' or OS_NAME == 'Linux'):
@@ -273,10 +312,11 @@ def handle_alias_save():
 
         # Name of the Bash script to download
         sh_script_name = '/unix_update_profile.sh'
+        sh_script_path = USER_BIN_DIR + sh_script_name
 
         # If the Bash script already exists, remove it
-        if (os.path.exists(USER_BIN_DIR + sh_script_name)):
-            os.remove(USER_BIN_DIR + sh_script_name)
+        if (os.path.exists(sh_script_path)):
+            os.remove(sh_script_path)
 
         # URL of the Bash script to download
 
@@ -285,7 +325,7 @@ def handle_alias_save():
         sh_url = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/unix_update_profile.sh"
 
         # Download the Bash script and save it in the USER_BIN_DIR
-        urllib.request.urlretrieve(sh_url, USER_BIN_DIR + sh_script_name)
+        urllib.request.urlretrieve(sh_url, sh_script_path)
 
         # Run the Bash script with prefered shell and refresh the Bash shell
         if (not args.shell == ''):
@@ -295,7 +335,7 @@ def handle_alias_save():
         subprocess.run(['bash', '.' + sh_script_name, '&& exec bash'], cwd=USER_BIN_DIR, check=True)
 
         # Delete the Bash script from the USER_BIN_DIR
-        os.remove(USER_BIN_DIR + sh_script_name)
+        os.remove(sh_script_path)
 
 
 # Remove biome if user doesn't want it
@@ -313,8 +353,13 @@ remove_git()
 if args.git:
     add_git()
 
+# Call the save_config_file funtion to download the Config file
+save_config_file()
+
+# Call the save_args_script function to download the Python script
+save_without_args_script()
 
 # If the alias argument is set to True
 if (args.alias):
-    # Call the save_args_script function to download the Python script
-    save_without_args_script()
+    # Handle the alias saving process
+    handle_alias_save()
