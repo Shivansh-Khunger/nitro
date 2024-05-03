@@ -1,6 +1,6 @@
 [project]
-name = "template_express_pino_scripts"
-version = "0.1.4"
+name = "express-nitro"
+version = "1.0.0"
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
