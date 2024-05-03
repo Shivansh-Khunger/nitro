@@ -10,7 +10,6 @@ parameters (platform).
 import os
 import json
 import stat
-import sys
 import time
 import tomllib
 import subprocess
@@ -26,11 +25,9 @@ OS_NAME = platform.system()  # Get OS name
 IF_WIN = (OS_NAME == 'Windows')  # Check if OS is Windows
 USER_BIN_DIR = str(Path.home())+'/bin_scripts'  # Path to bin_scripts
 
-TEMPLATE_REPO_URL = "https://github.com/Shivansh-Khunger/template_express_pino"  # Template URL
-REPO_URL = "https://github.com/Shivansh-Khunger/scripts_template_express_pino"  # Repository URL
-
-# Raw repository URL
-RAW_REPO_URL = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main"
+TEMPLATE_REPO_URL = "https://github.com/Shivansh-Khunger/template-express-nitro"  # Template URL
+REPO_URL = "https://github.com/Shivansh-Khunger/express-nitro"  # Repository URL
+RAW_REPO_URL = "https://raw.githubusercontent.com/Shivansh-Khunger/express-nitro/main"  # Raw repository URL
 
 
 def get_version_info():
@@ -75,7 +72,7 @@ def main():
     """This funtion encloses the business logic of the script."""
 
     # Print initial messages to the user
-    print("🚀 This script will create a new project based on the template_express_pino repository.")
+    print("🚀 This script will create a new project based on the template-express-nitro repository.")
     print("🛠️ You can customize the project by answering the following questions:")
 
     # Ask user if they want to use biome.js as linter & formatter
@@ -110,9 +107,9 @@ def main():
 
     # Ask user to enter the name for the new project directory
     new_dir_name = input(
-        "📁 Enter the name for the new project directory (default is 'template_express_pino'): ")
+        "📁 Enter the name for the new project directory (default is 'template-express-nitro'): ")
     if not new_dir_name:
-        new_dir_name = "template_express_pino"
+        new_dir_name = "template-express-nitro"
 
     # Print message about creating new project
     print(f"🚀 Creating new project in directory {new_dir_name}...")
@@ -122,7 +119,7 @@ def main():
 
     # Execute clone command and rename the cloned directory
     subprocess.run(['git', 'clone', TEMPLATE_REPO_URL], shell=IF_WIN, check=True)
-    os.rename(os.getcwd() + '/template_express_pino',
+    os.rename(os.getcwd() + '/template-express-nitro',
               new_project_dir)
 
     # Define a function to install dependencies
@@ -318,7 +315,7 @@ def update_current_script():
 def restart():
     """
     Restarts the script with updated code.
-    
+
     This function first outputs a message for the user with an animation which lasts for 2 seconds.
     After that the terminal is cleared and the user starts interacting with the new updated script.
     """
@@ -343,7 +340,7 @@ if (not IF_LATEST):
         # pylint: disable=line-too-long
         # disable for only one line
         continue_with_old = input(
-            f"🚀 This script is currently at version {CURRENT_VERSION}. A new version {CLOUD_VERSION} is available. You can find the changelog at \n{REPO_URL}/releases/ \nDo yous still want to continue with this version? (default is 'N')? ")
+            f"🚀 This script is currently at version {CURRENT_VERSION}. A new version {CLOUD_VERSION} is available. You can find the changelog at \n{REPO_URL}/releases/ \nDo you still want to continue with this version? (default is 'N')? ")
         if (not continue_with_old):
             continue_with_old = 'n'
         if (continue_with_old.lower() == 'y'):
