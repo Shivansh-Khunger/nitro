@@ -23,16 +23,14 @@ OS_NAME = platform.system()  # Get OS name
 IF_WIN = (OS_NAME == 'Windows')  # Check if OS is Windows
 USER_BIN_DIR = str(Path.home()) + '/bin_scripts'  # Path to bin_scripts
 
-TEMPLATE_REPO_URL = "https://github.com/Shivansh-Khunger/template_express_pino" # Template URL
-REPO_URL = "https://github.com/Shivansh-Khunger/scripts_template_express_pino"  # Repository URL
-
-# Raw repository URL
-RAW_REPO_URL = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main"
+TEMPLATE_REPO_URL = "https://github.com/Shivansh-Khunger/template-express-nitro"  # Template URL
+REPO_URL = "https://github.com/Shivansh-Khunger/express-nitro"  # Repository URL
+RAW_REPO_URL = "https://raw.githubusercontent.com/Shivansh-Khunger/express-nitro/main"  # Raw repository URL
 
 
 # Create the parser
 parser = argparse.ArgumentParser(
-    description='Create a new project based on the template_express_pino repository.')
+    description='Create a new project based on the template-express-nitro repository.')
 
 # Add the arguments
 parser.add_argument('--biome', action='store_true',
@@ -41,7 +39,7 @@ parser.add_argument('--biome', action='store_true',
 parser.add_argument('--git', action='store_false',
                     help='Initialize a git repo in the new project')
 
-parser.add_argument('--dir', type=str, default='template_express_pino',
+parser.add_argument('--dir', type=str, default='template-express-nitro',
                     help='Name for the new project directory')
 
 parser.add_argument('--alias',  action='store_false',
@@ -66,7 +64,7 @@ new_project_dir = os.getcwd() + f'/{args.dir}'
 
 # Execute clone command and rename the cloned directory
 subprocess.run(['git', 'clone', TEMPLATE_REPO_URL], shell=IF_WIN, check=True)
-os.rename(os.getcwd() + '/template_express_pino',
+os.rename(os.getcwd() + '/template-express-nitro',
           new_project_dir)
 
 
@@ -289,7 +287,7 @@ def handle_alias_save():
 
             # pylint: disable=line-too-long
             # disable for only one line
-        ps1_url = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/win_update_profile.ps1"
+        ps1_url = RAW_REPO_URL + "/win_update_profile.ps1"
 
         # Download the PowerShell script and save it in the USER_BIN_DIR
         urllib.request.urlretrieve(ps1_url, ps1_script_path)
@@ -322,7 +320,7 @@ def handle_alias_save():
 
             # pylint: disable=line-too-long
             # disable for only one line
-        sh_url = "https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/unix_update_profile.sh"
+        sh_url = RAW_REPO_URL + "/unix_update_profile.sh"
 
         # Download the Bash script and save it in the USER_BIN_DIR
         urllib.request.urlretrieve(sh_url, sh_script_path)

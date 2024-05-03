@@ -1,14 +1,16 @@
 # Introduction
 
 <p align="center">
-    <img src="https://i.ibb.co/yF2WrSt/Designer-6.png" alt="Siphar's Logo" width="256"/>
+    <img src="https://i.ibb.co/qJ6pQ2d/express-nitro-logo.png" alt="Express-Nitro Logo" width="256"/>
 </p>
 
-This repo holds a bear named **Siphar** which has some scripts for immediately setting up an express project based on this [template](https://github.com/Shivansh-Khunger/template_express_pino).
+This repo holds a **NOS** tank for your **`express.js`** project which will increase your speed of setting up an **express** project.
+
+The **NOS** mentioned above is basically a set of python scripts and they will create an **`express.js`** project based on this [template](https://github.com/Shivansh-Khunger/template-express-nitro).
 
 This template includes the following key components:
 
-- **[Express](https://www.npmjs.com/package/express)**: A fast and flexible Node.js web application framework.
+- **[Express.js](https://www.npmjs.com/package/express)**: A fast and flexible Node.js web application framework.
 
 - **[Pino](https://www.npmjs.com/package/pino)**: A low-overhead, high-speed Node.js logger. It also has sister packages, [pino-pretty](https://www.npmjs.com/package/pino-pretty) for pretty-printing logs, and [pino-http](https://www.npmjs.com/package/pino-http) for HTTP logging.
 
@@ -18,7 +20,7 @@ This template includes the following key components:
 
 - **[tsx](https://www.npmjs.com/package/tsx)**: A tool that restarts your TypeScript application when source files change.
 
-**Siphar** follows the saying -
+This Project follows the saying follows the saying -
 
 <blockquote style="border-left: 4px solid #0366d6; padding-left: 1em; color: #24292e; background-color: #; color: white;">
   <b>‘If you can't buy something you want, build it.’</b>
@@ -29,7 +31,7 @@ This template includes the following key components:
 If you want an Express project set up for you in a matter of seconds, copy and paste the following command into your terminal:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/with_args.py | python - --dir 'name of the directory'
+curl -sL https://raw.githubusercontent.com/Shivansh-Khunger/express-nitro/main/with_args.py | python - --dir 'name of the directory'
 ```
 
 <blockquote style="border-left: 4px solid #0366d6; padding-left: 1em; color: #24292e; background-color: #; color: white;">
@@ -39,14 +41,14 @@ curl -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_exp
 So the command for Windows users would be:
 
 ```powershell
-curl.exe -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/with_args.py | python - --dir 'name of the directory'
+curl.exe -sL https://raw.githubusercontent.com/Shivansh-Khunger/express-nitro/main/with_args.py | python - --dir 'name of the directory'
 ```
 
 ### Options
 
 - `--biome`: Use biome.js as linter & formatter. If you haven't heard of it, visit [biomejs.dev](https://biomejs.dev/). This is set to **false** by default.
 - `--git`: Initialize a git repo in the new project. This is set to **true** by default.
-- `--dir`: Specify a name for the new project directory. The default is 'template_express_pino'.
+- `--dir`: Specify a name for the new project directory. The default is 'template-express-nitro'.
 - `--alias`: Add alias **'mkexp'** to run this script from any location in your command line interface. This is set to **true** by default.
 - `--shell`: Specify the shell (bash [Default], zsh, ksh [Korn], csh [C-Shell], or fish).
 
@@ -74,7 +76,7 @@ curl.exe -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template
 Here's an example of how to use these options:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/Shivansh-Khunger/scripts_template_express_pino/main/with_args.py | python - --dir 'my_project' --biome --git --shell 'zsh'
+curl -sL https://raw.githubusercontent.com/Shivansh-Khunger/express-nitro/main/with_args.py | python - --dir 'my_project' --biome --git --shell 'zsh'
 ```
 
 <blockquote style="border-left: 4px solid #0366d6; padding-left: 1em; color: #24292e; background-color: #; color: white;">
@@ -95,7 +97,7 @@ After the initial use of this script, you can simply type `mkexp` in your comman
 # Contributing
 
 <p style="border-left: 4px solid #0366d6; padding-left: 1em; color: #24292e; background-color: #; color: white;">
-  <strong>Note:</strong> A detailed contributing guide will be added soon. Until then, if you want to make changes to this repository, please use your skills and common sense.
+  <strong>Note:</strong> A detailed contribution guide will be added soon. Until then, if you want to make changes to this repository, please use your skills and common sense.
 </blockquote>
 <br>
 
