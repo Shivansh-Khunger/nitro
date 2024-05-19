@@ -1,0 +1,11 @@
+{
+    "name": "node-nitro-app",
+    "version": "0.1.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "dotenvx run --env-file=.env.development -- tsx watch ./src/index.ts",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node ./index.js"
+    }
+}

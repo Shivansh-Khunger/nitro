@@ -1,0 +1,33 @@
+# .editorconfig
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = false
+
+# Matches multiple files with brace expansion notation
+# Set default charset
+[*.{js,ts,css,html}]
+charset = utf-8
+
+# Space indentation
+[*.{js,ts,css,html,json}]
+indent_style = space
+indent_size = 4
+
+# Matches the exact files either package.json or .travis.yml
+[{package.json,.travis.yml}]
+indent_style = space
+indent_size = 4
+
+# Matches the exact file .editorconfig
+[.editorconfig]
+indent_style = space
+indent_size = 4
+
+# Markdown files often use trailing whitespace to indicate line breaks
+[*.md]
+trim_trailing_whitespace = false
