@@ -1,0 +1,6 @@
+[project]
+name = "express-nitro"
+version = "1.0.0"
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
