@@ -1,14 +1,23 @@
 {
-    "name": "node-nitro",
-    "version": "0.1.0-beta.1",
+    "name": "create-node-nitro",
+    "version": "0.1.0-beta.3",
     "description": "",
     "main": "index.js",
     "scripts": {
+        "build": "tspc",
         "dev": "tspc --watch",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node ./index.js"
+        "start": "node ./index.js",
+        "pub": "npm run build && npm publish"
     },
-    "files": ["dist/**", "options/**", "templates/**"],
+    "bin": {
+        "create-node-nitro": "index.js"
+    },
+    "files": [
+        "dist/**",
+        "options/**",
+        "templates/**"
+    ],
     "publishConfig": {
         "access": "public"
     },
@@ -21,6 +30,7 @@
         "@biomejs/biome": "^1.7.3",
         "@types/prompts": "^2.4.9",
         "ts-patch": "^3.1.2",
+        "tslib": "^2.6.2",
         "tsx": "^4.7.1",
         "typescript": "^5.4.3",
         "typescript-transform-paths": "^3.4.7"
