@@ -1,32 +1,33 @@
-// still not sure which one to final but for select 'prompts' is looking nicer then inquirer
+// Import necessary external Module(s)
 import { Command, Option } from "commander";
-import { blue, green, lightRed, magenta, red, white, yellow } from "kolorist";
+import { blue, green, lightRed, magenta, red, yellow } from "kolorist";
 import prompts from "prompts";
 
+// Import necessary Type(s)
 import type { T_UserInput } from "../types/prompt";
 
-type ColorFunc = (str: string | number) => string;
-type Framework = {
+type T_ColorFunc = (str: string | number) => string;
+type T_Framework = {
     name: string;
     display: string;
-    color?: ColorFunc;
-    variants: FrameworkVariant[];
+    color?: T_ColorFunc;
+    variants: T_FrameworkVariant[];
 };
-type FrameworkVariant = {
+type T_FrameworkVariant = {
     name: string;
     display: string;
-    color: ColorFunc;
+    color: T_ColorFunc;
     description: string;
     customCommand?: string;
 };
-type Options = {
+type T_Options = {
     name: string;
     display: string;
-    color: ColorFunc;
+    color: T_ColorFunc;
     description: string;
 };
 
-const frameworks: Framework[] = [
+const frameworks: T_Framework[] = [
     {
         name: "express",
         display: "Express",
@@ -47,15 +48,15 @@ const frameworks: Framework[] = [
     },
 ];
 
-export const templates: ReadonlyArray<FrameworkVariant> = frameworks
-    .map((f: Framework) => {
-        return f.variants.map((v: FrameworkVariant) => {
+export const templates: ReadonlyArray<T_FrameworkVariant> = frameworks
+    .map((f: T_Framework) => {
+        return f.variants.map((v: T_FrameworkVariant) => {
             return v;
         });
     })
     .reduce((a, b) => a.concat(b), []);
 
-export const formatterAndLinters: Options[] = [
+export const formatterAndLinters: T_Options[] = [
     {
         name: "eslint-prettier",
         display: "EsLint + Prettier",
@@ -71,7 +72,7 @@ export const formatterAndLinters: Options[] = [
     },
 ];
 
-export const orms: Options[] = [
+export const orms: T_Options[] = [
     {
         name: "prisma",
         display: "Relational Db + Prisma",
@@ -94,7 +95,7 @@ export function parseArgs() {
     program
         .addOption(
             new Option("-t, --template <string>", "template name").choices(
-                templates.map((t: FrameworkVariant) => t.name),
+                templates.map((t: T_FrameworkVariant) => t.name),
             ),
         )
         .addOption(
@@ -137,7 +138,7 @@ export async function startUserInteraction() {
                 type: "select",
                 name: "ucTemplate",
                 message: "Choose your desired template",
-                choices: templates.map((t: FrameworkVariant) => {
+                choices: templates.map((t: T_FrameworkVariant) => {
                     const outputColor = t.color;
                     return {
                         title: outputColor(t.display),
@@ -156,7 +157,7 @@ export async function startUserInteraction() {
                 type: "select",
                 name: "ucFormatterAndLinter",
                 message: "Choose your desired formatter and linter combo",
-                choices: formatterAndLinters.map((fl: Options) => {
+                choices: formatterAndLinters.map((fl: T_Options) => {
                     const outputColor = fl.color;
 
                     const displaySplit = fl.display
@@ -183,7 +184,7 @@ export async function startUserInteraction() {
                 type: (prev) => (prev ? "select" : null),
                 name: "ucORM",
                 message: "Choose your desired OEM/ORM",
-                choices: orms.map((orm: Options) => {
+                choices: orms.map((orm: T_Options) => {
                     const outputColor = orm.color;
 
                     return {

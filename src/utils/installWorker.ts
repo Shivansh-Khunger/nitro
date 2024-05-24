@@ -1,5 +1,9 @@
+// Import necessary node Module(s)
 import { execSync } from "node:child_process";
 import { workerData } from "node:worker_threads";
+
+// Import necessary Module(s)
+import handleError from "./errorHandler";
 
 function installDependenciesInBackground(
     installCmd: string,
@@ -8,7 +12,7 @@ function installDependenciesInBackground(
     try {
         execSync(installCmd, { cwd: targetPath });
     } catch (err) {
-        // TODO -> handle errors
+        handleError(err);
     }
 }
 

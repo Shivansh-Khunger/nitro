@@ -1,19 +1,25 @@
+// Import necessary node Module(s)
 import fs from "node:fs";
 
-export async function makeDevEnv(targetPath: string) {
-    try {
-        const targetDevEnvPath = `${targetPath}/.env.development`;
-        const devEnvData = "NODE_ENV=development";
+// Import necessary Module(s)
+import handleError from "@utils/errorHandler";
 
-        fs.writeFileSync(targetDevEnvPath, devEnvData);
-    } catch (err) {}
+export async function makeDevEnv(targetPath: string) {
+    const targetDevEnvPath = `${targetPath}/.env.development`;
+    const devEnvData = "NODE_ENV=development";
+    try {
+        await fs.promises.writeFile(targetDevEnvPath, devEnvData);
+    } catch (err) {
+        handleError(err);
+    }
 }
 
 export async function makeProdEnv(targetPath: string) {
+    const targetProdEnvPath = `${targetPath}/.env.production`;
+    const prodEnvData = "NODE_ENV=production";
     try {
-        const targetProdEnvPath = `${targetPath}/.env.production`;
-        const prodEnvData = "NODE_ENV=development";
-
-        fs.writeFileSync(targetProdEnvPath, prodEnvData);
-    } catch (err) {}
+        await fs.promises.writeFile(targetProdEnvPath, prodEnvData);
+    } catch (err) {
+        handleError(err);
+    }
 }

@@ -1,8 +1,9 @@
-import fs from "node:fs";
-
+// Import necessary Type(s)
 import type { T_FormatAndLinters } from "../types/prompt";
 
+// Import necessary Module(s)
 import { updateFile } from "@utils/fileSystem";
+import { copyFile } from "@utils/fileSystem";
 
 async function addFmtAndLinterConfig(
     fmtAndLinter: T_FormatAndLinters,
@@ -18,13 +19,8 @@ async function addFmtAndLinterConfig(
                 const biomeConfig = "biome.json";
                 const localBiomeConfigPath = `${optionsDirPath}/${fmtAndLinter}/${biomeConfig}`;
                 const targetBiomeConfigPath = `${targetPath}/${biomeConfig}`;
-                fs.copyFile(
-                    localBiomeConfigPath,
-                    targetBiomeConfigPath,
-                    (err) => {
-                        // TODO -> handle errors
-                    },
-                );
+
+                copyFile(localBiomeConfigPath, targetBiomeConfigPath);
             }
 
             break;
@@ -33,13 +29,8 @@ async function addFmtAndLinterConfig(
                 const esLintConfig = "eslint.config.js";
                 const localEsLintConfigPath = `${optionsDirPath}/${fmtAndLinter}/${esLintConfig}`;
                 const targetEsLintConfigPath = `${targetPath}/${esLintConfig}`;
-                fs.copyFile(
-                    localEsLintConfigPath,
-                    targetEsLintConfigPath,
-                    (err) => {
-                        // TODO -> handle errors
-                    },
-                );
+
+                copyFile(localEsLintConfigPath, targetEsLintConfigPath);
             }
 
             break;
