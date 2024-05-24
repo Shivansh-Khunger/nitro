@@ -1,8 +1,12 @@
 import fs from "node:fs";
 
+import handleError from "./errorHandler";
+
 export function deleteFile(targetFilePath: string) {
     fs.unlink(targetFilePath, (err) => {
-        // TODO -> handle errors
+        if (err) {
+            handleError(err);
+        }
     });
 }
 
@@ -12,7 +16,7 @@ export async function updateFile(
 ) {
     fs.readFile(targetFilePath, "utf-8", (err, data) => {
         if (err) {
-            // TODO -> handle errors
+            handleError(err);
         }
 
         let targetData = data;
@@ -25,7 +29,7 @@ export async function updateFile(
 
             fs.writeFile(targetFilePath, targetData, (err) => {
                 if (err) {
-                    // TODO -> handle errors
+                    handleError(err);
                 }
             });
         });
@@ -35,7 +39,7 @@ export async function updateFile(
 export async function copyFile(localFilePath: string, targetFilePath: string) {
     fs.copyFile(localFilePath, targetFilePath, (err) => {
         if (err) {
-            // TODO -> handle errors
+            handleError(err);
         }
     });
 }
@@ -43,7 +47,7 @@ export async function copyFile(localFilePath: string, targetFilePath: string) {
 export async function appendFile(targetFilePath: string, appendData: string) {
     fs.appendFile(targetFilePath, appendData, (err) => {
         if (err) {
-            // TODO -> handle errors
+            handleError(err);
         }
     });
 }

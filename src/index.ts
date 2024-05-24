@@ -1,13 +1,18 @@
+// Import necessary node Module(s)
 import { exec } from "node:child_process";
 import fs from "node:fs";
 import { Worker } from "node:worker_threads";
 
-import x from "@helpers/db&Orms";
+// Import necessary Module(s)
+import addDbAndOrm from "@helpers/db&Orms";
 import { updatePackageScript } from "@helpers/db&Orms";
+import { makeDevEnv, makeProdEnv } from "@helpers/envMaker";
 import addFmtAndLinterConfig from "@helpers/fmt&Linters";
 import handleAdditionalOptions from "@helpers/handleOptions";
 import { parseArgs, startUserInteraction } from "@utils/cli";
+import handleError from "@utils/errorHandler";
 
+// Import necessary Type(s)
 import type {
     T_Arg_HandleArgs,
     T_Arg_HandleCli,
@@ -40,12 +45,13 @@ if (process.platform === "win32") {
     }
 })();
 
-function copyTemplate(targetPath: string, targetTemplate: string) {
+async function copyTemplate(targetPath: string, targetTemplate: string) {
     try {
         const templatePath = `${projectDirPath}/templates/${targetTemplate}`;
-        fs.cpSync(templatePath, targetPath, { recursive: true });
+
+        await fs.promises.cp(templatePath, targetPath, { recursive: true });
     } catch (err) {
-        console.log(err);
+        handleError(err);
     }
 }
 
@@ -53,6 +59,7 @@ async function intialiseGitRepo(targetPath: string) {
     const intialiseCmd = "git init";
     exec(intialiseCmd, { cwd: targetPath }, (err) => {
         if (err) {
+            handleError(err);
         }
     });
 }
@@ -110,7 +117,7 @@ function installDependecies(targetPath: string, userInput: T_UserInput) {
         );
 
         if (userInput.wantDb) {
-            x(userInput, projectDirPath, targetPath);
+            addDbAndOrm(userInput, projectDirPath, targetPath);
         }
     }
 
@@ -155,21 +162,13 @@ function installDependecies(targetPath: string, userInput: T_UserInput) {
     }
 }
 
-export function rollBack(targetPath: string) {
-    try {
-        fs.rmdirSync(targetPath);
-    } catch (err) {
-        // TODO -> handle errors
-    }
-}
-
 async function handleLogic(userInput: T_UserInput) {
-    try {
-        const targetPath = `${cwd}/${userInput.dirName}`;
-        copyTemplate(targetPath, userInput.template);
+    const targetPath = `${cwd}/${userInput.dirName}`;
 
-        installDependecies(targetPath, userInput);
+    await copyTemplate(targetPath, userInput.template);
+    await makeDevEnv(targetPath);
+    await makeProdEnv(targetPath);
 
-        intialiseGitRepo(targetPath);
-    } catch (err) {}
+    installDependecies(targetPath, userInput);
+    intialiseGitRepo(targetPath);
 }

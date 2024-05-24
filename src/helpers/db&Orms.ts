@@ -1,8 +1,12 @@
+// Import necessary node Module(s)
 import { exec } from "node:child_process";
 import fs from "node:fs";
 
+// Import necessary Type(s)
 import type { T_UserInput, T_UserInputCli } from "../types/prompt";
 
+// Import necessary Module(s)
+import handleError from "@utils/errorHandler";
 import {
     appendFile,
     copyFile,
@@ -17,7 +21,6 @@ function ifWantTs(userInput: T_UserInput) {
         case "express/ts":
             return true;
         default:
-            // TODO -> handle errors
             throw new Error("Invalid template");
     }
 }
@@ -34,7 +37,7 @@ export async function updatePackageScript(targetPath: string) {
 
     fs.readFile(targetPackagePath, "utf-8", (err, data) => {
         if (err) {
-            // TODO -> handle errors
+            handleError(err);
         }
 
         const targetData = JSON.parse(data);
@@ -44,12 +47,14 @@ export async function updatePackageScript(targetPath: string) {
         });
 
         fs.writeFile(targetPackagePath, JSON.stringify(targetData), (err) => {
-            // TODO -> handle errors
+            if (err) {
+                handleError(err);
+            }
         });
     });
 }
 
-async function x(
+async function addDbAndOrm(
     userInput: T_UserInputCli,
     projectDirPath: string,
     targetPath: string,
@@ -90,7 +95,7 @@ async function x(
 
             exec("npx prisma init", { cwd: targetPath }, (err) => {
                 if (err) {
-                    // TODO -> handle errors
+                    handleError(err);
                 }
 
                 const defaultEnvPath = `${targetPath}/.env`;
@@ -116,4 +121,4 @@ async function x(
     }
 }
 
-export default x;
+export default addDbAndOrm;
