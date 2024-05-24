@@ -1,10 +1,8 @@
-import { bgCyan } from "kolorist";
-import type { T_UserInputCli } from "../types/prompt";
+// Import necessary external Module(s)
+import { bgCyan, yellow } from "kolorist";
 
-// export type T_ReturnHandleOptions = {
-//     dependencyCmd: string;
-//     devDependencyCmd: string;
-// };
+// Import necessary Type(s)
+import type { T_UserInputCli } from "../types/prompt";
 
 function handleAdditionalOptions(
     userInput: T_UserInputCli,
@@ -33,7 +31,11 @@ function handleAdditionalOptions(
 
     const installCmd = `${dependency} && ${devDependency}`;
 
-    console.log(bgCyan(installCmd));
+    console.log(
+        `${yellow("Installling dependencies...\ncommand ->")} ${bgCyan(
+            ` ${installCmd} `,
+        )}`,
+    );
 
     return installCmd;
 }
