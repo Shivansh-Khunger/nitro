@@ -2,12 +2,13 @@ import { exec } from "node:child_process";
 import fs from "node:fs";
 import { Worker } from "node:worker_threads";
 
-import x from "@helpers/db&Orms";
+import addDbAndOrm from "@helpers/db&Orms";
 import { updatePackageScript } from "@helpers/db&Orms";
 import addFmtAndLinterConfig from "@helpers/fmt&Linters";
 import handleAdditionalOptions from "@helpers/handleOptions";
 import { parseArgs, startUserInteraction } from "@utils/cli";
 
+import { makeDevEnv, makeProdEnv } from "@helpers/envMaker";
 import type {
     T_Arg_HandleArgs,
     T_Arg_HandleCli,
@@ -40,13 +41,12 @@ if (process.platform === "win32") {
     }
 })();
 
-function copyTemplate(targetPath: string, targetTemplate: string) {
+async function copyTemplate(targetPath: string, targetTemplate: string) {
     try {
         const templatePath = `${projectDirPath}/templates/${targetTemplate}`;
+
         fs.cpSync(templatePath, targetPath, { recursive: true });
-    } catch (err) {
-        console.log(err);
-    }
+    } catch (err) {}
 }
 
 async function intialiseGitRepo(targetPath: string) {
@@ -110,7 +110,7 @@ function installDependecies(targetPath: string, userInput: T_UserInput) {
         );
 
         if (userInput.wantDb) {
-            x(userInput, projectDirPath, targetPath);
+            addDbAndOrm(userInput, projectDirPath, targetPath);
         }
     }
 
@@ -164,12 +164,13 @@ export function rollBack(targetPath: string) {
 }
 
 async function handleLogic(userInput: T_UserInput) {
-    try {
-        const targetPath = `${cwd}/${userInput.dirName}`;
-        copyTemplate(targetPath, userInput.template);
+    const targetPath = `${cwd}/${userInput.dirName}`;
+    await copyTemplate(targetPath, userInput.template);
 
-        installDependecies(targetPath, userInput);
+    await makeDevEnv(targetPath);
+    await makeProdEnv(targetPath);
 
-        intialiseGitRepo(targetPath);
-    } catch (err) {}
+    installDependecies(targetPath, userInput);
+
+    intialiseGitRepo(targetPath);
 }
