@@ -49,7 +49,7 @@ export async function updatePackageScript(targetPath: string) {
     });
 }
 
-async function x(
+async function addDbAndOrm(
     userInput: T_UserInputCli,
     projectDirPath: string,
     targetPath: string,
@@ -116,4 +116,4 @@ async function x(
     }
 }
 
-export default x;
+export default addDbAndOrm;
