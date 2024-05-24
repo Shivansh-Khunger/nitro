@@ -1,14 +1,18 @@
+// Import necessary node Module(s)
 import { exec } from "node:child_process";
 import fs from "node:fs";
 import { Worker } from "node:worker_threads";
 
+// Import necessary Module(s)
 import addDbAndOrm from "@helpers/db&Orms";
 import { updatePackageScript } from "@helpers/db&Orms";
+import { makeDevEnv, makeProdEnv } from "@helpers/envMaker";
 import addFmtAndLinterConfig from "@helpers/fmt&Linters";
 import handleAdditionalOptions from "@helpers/handleOptions";
 import { parseArgs, startUserInteraction } from "@utils/cli";
+import handleError from "@utils/errorHandler";
 
-import { makeDevEnv, makeProdEnv } from "@helpers/envMaker";
+// Import necessary Type(s)
 import type {
     T_Arg_HandleArgs,
     T_Arg_HandleCli,
@@ -45,14 +49,17 @@ async function copyTemplate(targetPath: string, targetTemplate: string) {
     try {
         const templatePath = `${projectDirPath}/templates/${targetTemplate}`;
 
-        fs.cpSync(templatePath, targetPath, { recursive: true });
-    } catch (err) {}
+        await fs.promises.cp(templatePath, targetPath, { recursive: true });
+    } catch (err) {
+        handleError(err);
+    }
 }
 
 async function intialiseGitRepo(targetPath: string) {
     const intialiseCmd = "git init";
     exec(intialiseCmd, { cwd: targetPath }, (err) => {
         if (err) {
+            handleError(err);
         }
     });
 }
@@ -155,22 +162,13 @@ function installDependecies(targetPath: string, userInput: T_UserInput) {
     }
 }
 
-export function rollBack(targetPath: string) {
-    try {
-        fs.rmdirSync(targetPath);
-    } catch (err) {
-        // TODO -> handle errors
-    }
-}
-
 async function handleLogic(userInput: T_UserInput) {
     const targetPath = `${cwd}/${userInput.dirName}`;
-    await copyTemplate(targetPath, userInput.template);
 
+    await copyTemplate(targetPath, userInput.template);
     await makeDevEnv(targetPath);
     await makeProdEnv(targetPath);
 
     installDependecies(targetPath, userInput);
-
     intialiseGitRepo(targetPath);
 }
