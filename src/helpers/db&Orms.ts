@@ -25,7 +25,7 @@ function ifWantTs(userInput: T_UserInput) {
     }
 }
 
-export async function updatePackageScript(targetPath: string) {
+function updatePackageScript(targetPath: string) {
     const targetPackagePath = `${targetPath}/package.json`;
 
     const appendScripts = [
@@ -35,26 +35,21 @@ export async function updatePackageScript(targetPath: string) {
         },
     ];
 
-    fs.readFile(targetPackagePath, "utf-8", (err, data) => {
-        if (err) {
-            handleError(err);
-        }
-
-        const targetData = JSON.parse(data);
+    try {
+        const targetData = fs.readFileSync(targetPackagePath, "utf-8");
+        const targetDataJson = JSON.parse(targetData);
 
         appendScripts.map((s) => {
-            Object.assign(targetData.scripts, s);
+            Object.assign(targetDataJson.scripts, s);
         });
 
-        fs.writeFile(targetPackagePath, JSON.stringify(targetData), (err) => {
-            if (err) {
-                handleError(err);
-            }
-        });
-    });
+        fs.writeFileSync(targetPackagePath, JSON.stringify(targetDataJson));
+    } catch (err) {
+        handleError(err);
+    }
 }
 
-async function addDbAndOrm(
+function addDbAndOrm(
     userInput: T_UserInputCli,
     projectDirPath: string,
     targetPath: string,
@@ -111,7 +106,7 @@ async function addDbAndOrm(
                 `${tagetSrcPath}/index.${wantTs ? "ts" : "js"}`,
             );
 
-            // updatePackageScript(targetPath);
+            updatePackageScript(targetPath);
             break;
         }
 
