@@ -12,6 +12,7 @@ import printDependencies from "@helpers/printDependencies";
 import { parseArgs, startUserInteraction } from "@utils/cli";
 import handleError, { makeTargetPath } from "@utils/errorHandler";
 
+import { renameFile } from "@utils/fileSystem";
 // Import necessary Type(s)
 import type {
     T_Arg_HandleArgs,
@@ -61,6 +62,16 @@ function intialiseGitRepo(targetPath: string) {
         execSync(intialiseCmd, { cwd: targetPath });
     } catch (err) {
         handleError(err);
+    }
+}
+
+function performRenames(targetPath: string) {
+    const renameFiles: Record<string, string> = {
+        _gitignore: ".gitignore",
+    };
+
+    for (const key in renameFiles) {
+        renameFile(`${targetPath}/${key}`, `${targetPath}/${renameFiles[key]}`);
     }
 }
 
@@ -162,6 +173,7 @@ function handleLogic(userInput: T_UserInput) {
     makeDevEnv(targetPath);
     makeProdEnv(targetPath);
 
+    performRenames(targetPath);
     intialiseGitRepo(targetPath);
     installDependecies(targetPath, userInput);
 }
