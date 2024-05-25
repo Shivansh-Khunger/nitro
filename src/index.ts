@@ -1,16 +1,16 @@
 // Import necessary node Module(s)
-import { exec } from "node:child_process";
+import { execSync } from "node:child_process";
 import fs from "node:fs";
 import { Worker } from "node:worker_threads";
 
 // Import necessary Module(s)
 import addDbAndOrm from "@helpers/db&Orms";
-import { updatePackageScript } from "@helpers/db&Orms";
 import { makeDevEnv, makeProdEnv } from "@helpers/envMaker";
 import addFmtAndLinterConfig from "@helpers/fmt&Linters";
 import handleAdditionalOptions from "@helpers/handleOptions";
+import printDependencies from "@helpers/printDependencies";
 import { parseArgs, startUserInteraction } from "@utils/cli";
-import handleError from "@utils/errorHandler";
+import handleError, { makeTargetPath } from "@utils/errorHandler";
 
 // Import necessary Type(s)
 import type {
@@ -19,7 +19,6 @@ import type {
 } from "./types/dependencyInstallers";
 import type { T_UserInput } from "./types/prompt";
 
-const cwd = process.cwd();
 let filePathArr: string[];
 export let projectDirPath: string;
 
@@ -45,44 +44,43 @@ if (process.platform === "win32") {
     }
 })();
 
-async function copyTemplate(targetPath: string, targetTemplate: string) {
+function copyTemplate(targetPath: string, targetTemplate: string) {
     try {
         const templatePath = `${projectDirPath}/templates/${targetTemplate}`;
 
-        await fs.promises.cp(templatePath, targetPath, { recursive: true });
+        fs.cpSync(templatePath, targetPath, { recursive: true });
     } catch (err) {
         handleError(err);
     }
 }
 
-async function intialiseGitRepo(targetPath: string) {
+function intialiseGitRepo(targetPath: string) {
     const intialiseCmd = "git init";
-    exec(intialiseCmd, { cwd: targetPath }, (err) => {
-        if (err) {
-            handleError(err);
-        }
-    });
+
+    try {
+        execSync(intialiseCmd, { cwd: targetPath });
+    } catch (err) {
+        handleError(err);
+    }
 }
 
 function installDependecies(targetPath: string, userInput: T_UserInput) {
-    let installCmd: string;
     const dependencyCmd = "npm i express pino pino-http pino-pretty";
     let devDependencyCmd: string;
 
-    const installWorkerPath = `${projectDirPath}/dist/utils/installWorker.js`;
-    function handleArgs({ installCmd, targetPath }: T_Arg_HandleArgs) {
-        const installWorker = new Worker(installWorkerPath, {
-            workerData: {
-                installCmd,
-                targetPath,
-            },
-        });
-
-        installWorker.on("exit", (code) => {
-            if (code === 0) {
-                updatePackageScript(targetPath);
-            }
-        });
+    function handleArgs({
+        dependencyCmd,
+        devDependencyCmd,
+        targetPath,
+    }: T_Arg_HandleArgs) {
+        const installCmd = `${dependencyCmd} && ${devDependencyCmd}`;
+        try {
+            execSync(installCmd, {
+                cwd: targetPath,
+            });
+        } catch (err) {
+            handleError(err);
+        }
     }
 
     function handleCli({
@@ -97,24 +95,20 @@ function installDependecies(targetPath: string, userInput: T_UserInput) {
             devDependencyCmd,
         );
 
-        const installWorker = new Worker(installWorkerPath, {
-            workerData: {
-                installCmd,
-                targetPath,
-            },
-        });
-
-        installWorker.on("exit", (code) => {
-            if (code === 0) {
-                updatePackageScript(targetPath);
-            }
-        });
-
         addFmtAndLinterConfig(
             userInput.formatterAndLinter,
             targetPath,
             projectDirPath,
         );
+
+        try {
+            execSync(installCmd, {
+                cwd: targetPath,
+                stdio: "inherit",
+            });
+        } catch (err) {
+            handleError(err);
+        }
 
         if (userInput.wantDb) {
             addDbAndOrm(userInput, projectDirPath, targetPath);
@@ -126,9 +120,8 @@ function installDependecies(targetPath: string, userInput: T_UserInput) {
             {
                 devDependencyCmd = "npm i --save-dev @dotenvx/dotenvx nodemon";
 
-                installCmd = `${dependencyCmd} && ${devDependencyCmd}`;
                 if (userInput.type === "args") {
-                    handleArgs({ installCmd, targetPath });
+                    handleArgs({ dependencyCmd, devDependencyCmd, targetPath });
                 } else {
                     handleCli({
                         userInput,
@@ -144,9 +137,8 @@ function installDependecies(targetPath: string, userInput: T_UserInput) {
                 devDependencyCmd =
                     "npm i --save-dev tsx typescript @dotenvx/dotenvx @types/express @types/node";
 
-                installCmd = `${dependencyCmd} && ${devDependencyCmd}`;
                 if (userInput.type === "args") {
-                    handleArgs({ installCmd, targetPath });
+                    handleArgs({ dependencyCmd, devDependencyCmd, targetPath });
                 } else {
                     handleCli({
                         userInput,
@@ -162,13 +154,14 @@ function installDependecies(targetPath: string, userInput: T_UserInput) {
     }
 }
 
-async function handleLogic(userInput: T_UserInput) {
-    const targetPath = `${cwd}/${userInput.dirName}`;
+function handleLogic(userInput: T_UserInput) {
+    const targetPath = makeTargetPath(userInput.dirName);
 
-    await copyTemplate(targetPath, userInput.template);
-    await makeDevEnv(targetPath);
-    await makeProdEnv(targetPath);
+    copyTemplate(targetPath, userInput.template);
 
-    installDependecies(targetPath, userInput);
+    makeDevEnv(targetPath);
+    makeProdEnv(targetPath);
+
     intialiseGitRepo(targetPath);
+    installDependecies(targetPath, userInput);
 }
