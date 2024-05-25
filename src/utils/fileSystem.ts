@@ -3,51 +3,43 @@ import fs from "node:fs";
 import handleError from "./errorHandler";
 
 export function deleteFile(targetFilePath: string) {
-    fs.unlink(targetFilePath, (err) => {
-        if (err) {
-            handleError(err);
-        }
-    });
+    try {
+        fs.unlinkSync(targetFilePath);
+    } catch (err) {
+        handleError(err);
+    }
 }
 
-export async function updateFile(
-    localFilePath: string,
-    targetFilePath: string,
-) {
-    fs.readFile(targetFilePath, "utf-8", (err, data) => {
-        if (err) {
-            handleError(err);
-        }
+export function updateFile(localFilePath: string, targetFilePath: string) {
+    try {
+        const localData = fs.readFileSync(localFilePath, "utf-8");
 
-        let targetData = data;
-        fs.readFile(localFilePath, "utf-8", (err, data) => {
-            if (err) {
-            }
-
-            const localData = data;
-            targetData = localData;
-
-            fs.writeFile(targetFilePath, targetData, (err) => {
-                if (err) {
-                    handleError(err);
-                }
-            });
-        });
-    });
+        fs.writeFileSync(targetFilePath, localData);
+    } catch (err) {
+        handleError(err);
+    }
 }
 
-export async function copyFile(localFilePath: string, targetFilePath: string) {
-    fs.copyFile(localFilePath, targetFilePath, (err) => {
-        if (err) {
-            handleError(err);
-        }
-    });
+export function copyFile(localFilePath: string, targetFilePath: string) {
+    try {
+        fs.copyFileSync(localFilePath, targetFilePath);
+    } catch (err) {
+        handleError(err);
+    }
 }
 
-export async function appendFile(targetFilePath: string, appendData: string) {
-    fs.appendFile(targetFilePath, appendData, (err) => {
-        if (err) {
-            handleError(err);
-        }
-    });
+export function appendFile(targetFilePath: string, appendData: string) {
+    try {
+        fs.appendFileSync(targetFilePath, appendData);
+    } catch (err) {
+        handleError(err);
+    }
+}
+
+export function renameFile(oldName: string, newName: string) {
+    try {
+        fs.renameSync(oldName, newName);
+    } catch (err) {
+        handleError(err);
+    }
 }

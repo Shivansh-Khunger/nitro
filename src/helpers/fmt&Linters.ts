@@ -5,7 +5,7 @@ import type { T_FormatAndLinters } from "../types/prompt";
 import { updateFile } from "@utils/fileSystem";
 import { copyFile } from "@utils/fileSystem";
 
-async function addFmtAndLinterConfig(
+function addFmtAndLinterConfig(
     fmtAndLinter: T_FormatAndLinters,
     targetPath: string,
     projectDirPath: string,
