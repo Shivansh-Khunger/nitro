@@ -8,7 +8,6 @@ import addDbAndOrm from "@helpers/db&Orms";
 import { makeDevEnv, makeProdEnv } from "@helpers/envMaker";
 import addFmtAndLinterConfig from "@helpers/fmt&Linters";
 import handleAdditionalOptions from "@helpers/handleOptions";
-import printDependencies from "@helpers/printDependencies";
 import { parseArgs, startUserInteraction } from "@utils/cli";
 import handleError, { makeTargetPath } from "@utils/errorHandler";
 
