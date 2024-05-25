@@ -35,3 +35,11 @@ export function appendFile(targetFilePath: string, appendData: string) {
         handleError(err);
     }
 }
+
+export function renameFile(oldName: string, newName: string) {
+    try {
+        fs.renameSync(oldName, newName);
+    } catch (err) {
+        handleError(err);
+    }
+}
