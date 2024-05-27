@@ -66,7 +66,7 @@ function addDbAndOrm(
 
     switch (userInput.orm) {
         case "mongoose":
-            envAppendData = `MONGO_URI=${envAppendData}`;
+            envAppendData = `\nMONGO_URI=${envAppendData}`;
             appendFile(targetEnvPath, envAppendData);
 
             localOrmDirPath = `${optionsDirPath}/mongoose/${
@@ -85,7 +85,7 @@ function addDbAndOrm(
             break;
 
         case "prisma": {
-            envAppendData = `DATABASE_URL=${envAppendData}`;
+            envAppendData = `\nDATABASE_URL=${envAppendData}`;
             appendFile(targetEnvPath, envAppendData);
 
             exec("npx prisma init", { cwd: targetPath }, (err) => {
