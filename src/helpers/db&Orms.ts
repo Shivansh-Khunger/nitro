@@ -62,57 +62,60 @@ function addDbAndOrm(
     const targetEnvPath = `${targetPath}/.env.development`;
     let envAppendData = userInput.dsn;
 
+    let localTypePath: string;
+    const targetTypePath = `${targetPath}/types/enviorment.d.ts`;
+
     const wantTs = ifWantTs(userInput);
 
-    switch (userInput.orm) {
-        case "mongoose":
-            envAppendData = `\nMONGO_URI=${envAppendData}`;
-            appendFile(targetEnvPath, envAppendData);
+    if (userInput.orm === "mongoose") {
+        envAppendData = `\nMONGO_URI=${envAppendData}`;
+        appendFile(targetEnvPath, envAppendData);
 
-            localOrmDirPath = `${optionsDirPath}/mongoose/${
-                wantTs ? "ts" : "js"
-            }`;
+        localOrmDirPath = `${optionsDirPath}/mongoose/${wantTs ? "ts" : "js"}`;
 
-            updateFile(
-                `${localOrmDirPath}/index.${wantTs ? "ts" : "js"}`,
-                `${tagetSrcPath}/index.${wantTs ? "ts" : "js"}`,
-            );
+        localTypePath = `${localOrmDirPath}/enviorment.d.ts`;
 
-            copyFile(
-                `${localOrmDirPath}/db.${wantTs ? "ts" : "js"}`,
-                `${targetOrmDirPath}/db.${wantTs ? "ts" : "js"}`,
-            );
-            break;
+        updateFile(
+            `${localOrmDirPath}/index.${wantTs ? "ts" : "js"}`,
+            `${tagetSrcPath}/index.${wantTs ? "ts" : "js"}`,
+        );
 
-        case "prisma": {
-            envAppendData = `\nDATABASE_URL=${envAppendData}`;
-            appendFile(targetEnvPath, envAppendData);
+        copyFile(
+            `${localOrmDirPath}/db.${wantTs ? "ts" : "js"}`,
+            `${targetOrmDirPath}/db.${wantTs ? "ts" : "js"}`,
+        );
 
-            exec("npx prisma init", { cwd: targetPath }, (err) => {
-                if (err) {
-                    handleError(err);
-                }
+        if (wantTs) {
+            updateFile(localTypePath, targetTypePath);
+        }
+    }
+    if (userInput.orm === "prisma") {
+        envAppendData = `\nDATABASE_URL=${envAppendData}`;
+        appendFile(targetEnvPath, envAppendData);
 
-                const defaultEnvPath = `${targetPath}/.env`;
-                deleteFile(defaultEnvPath);
-            });
+        exec("npx prisma init", { cwd: targetPath }, (err) => {
+            if (err) {
+                handleError(err);
+            }
 
-            localOrmDirPath = `${optionsDirPath}/prisma/${
-                wantTs ? "ts" : "js"
-            }`;
+            const defaultEnvPath = `${targetPath}/.env`;
+            deleteFile(defaultEnvPath);
+        });
 
-            updateFile(
-                `${localOrmDirPath}/index.${wantTs ? "ts" : "js"}`,
-                `${tagetSrcPath}/index.${wantTs ? "ts" : "js"}`,
-            );
+        localOrmDirPath = `${optionsDirPath}/prisma/${wantTs ? "ts" : "js"}`;
 
-            updatePackageScript(targetPath);
-            break;
+        localTypePath = `${localOrmDirPath}/enviorment.d.ts`;
+
+        updateFile(
+            `${localOrmDirPath}/index.${wantTs ? "ts" : "js"}`,
+            `${tagetSrcPath}/index.${wantTs ? "ts" : "js"}`,
+        );
+
+        if (wantTs) {
+            updateFile(localTypePath, targetTypePath);
         }
 
-        default:
-            // Handle other cases or throw an error
-            break;
+        updatePackageScript(targetPath);
     }
 }
 
