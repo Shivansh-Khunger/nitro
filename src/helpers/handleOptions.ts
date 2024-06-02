@@ -17,7 +17,7 @@ function handleAdditionalOptions(
     } else {
         devDependency = `${devDependency} eslint`;
         if (userInput.template === "express/ts") {
-            devDependency = `${devDependency} @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-prettier`;
+            devDependency = `${devDependency} @eslint/js @types/eslint__js typescript typescript-eslint eslint-plugin-prettier`;
         }
     }
 
