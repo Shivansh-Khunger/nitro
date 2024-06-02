@@ -1,6 +1,3 @@
-// Import necessary external Module(s)
-import { bgCyan, yellow } from "kolorist";
-
 // Import necessary Type(s)
 import type { T_UserInputCli } from "../types/prompt";
 
@@ -10,7 +7,7 @@ function handleAdditionalOptions(
     tempDevDependency: string,
 ) {
     let dependency = tempDependency;
-    let devDependency = `${tempDevDependency} prettier`;
+    let devDependency = tempDevDependency;
 
     if (userInput.formatterAndLinter === "biome-prettier") {
         devDependency = `${devDependency} @biomejs/biome`;
@@ -29,15 +26,10 @@ function handleAdditionalOptions(
         }
     }
 
-    const installCmd = `${dependency} && ${devDependency}`;
-
-    console.log(
-        `${yellow("Installling dependencies...\ncommand ->")} ${bgCyan(
-            ` ${installCmd} `,
-        )}`,
-    );
-
-    return installCmd;
+    return {
+        updtDependencyCmd: dependency,
+        updtDevDependencyCmd: devDependency,
+    };
 }
 
 export default handleAdditionalOptions;
