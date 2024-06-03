@@ -1,9 +1,13 @@
-# create-node-nitro <a href="https://www.npmjs.com/package/create-node-nitro"><img src="https://img.shields.io/npm/v/create-node-nitro" alt="npm package"></a>
+# create-nitro <a href="https://www.npmjs.com/package/create-node-nitro"><img src="https://img.shields.io/npm/v/create-nitro" alt="npm package"></a>
+
+<div align="center">
+<img src="https://i.ibb.co/YBfq0GH/nitro-logo.png" alt="nitro-logo" width="256" >
+</div>
 
 ## Scaffolding Your Node API's
 
 > **Compatibility Note:**
-> Vite requires [Node.js](https://nodejs.org/en/) version 18+, 20+. However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
+> Nitro requires [Node.js](https://nodejs.org/en/) version 18+, 20+. However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
 
 ### Features
 
@@ -15,7 +19,19 @@
 With NPM:
 
 ```bash
-$ npm create node-nitro@latest
+npm create nitro@latest
+```
+
+With Yarn:
+
+```bash
+yarn create nitro
+```
+
+With PNPM:
+
+```bash
+pnpm create nitro
 ```
 
 Then follow the prompts!
@@ -24,7 +40,13 @@ You can also directly specify the project name and the template you want to use 
 
 ```bash
 # npm 7+, extra double-dash is needed:
-npm create node-nitro@latest -- -t <template name> -d <directory name>
+npm create nitro@latest -- -t <template name> -d <directory name>
+
+# yarn
+yarn create nitro -t <template name> -d <directory name>
+
+# pnpm
+pnpm create nitro -t <template name> -d <directory name>
 ```
 
 Currently supported template presets include:

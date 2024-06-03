@@ -1,6 +1,3 @@
-// Import necessary external Module(s)
-import { bgCyan, yellow } from "kolorist";
-
 // Import necessary Type(s)
 import type { T_UserInputCli } from "../types/prompt";
 
@@ -10,14 +7,14 @@ function handleAdditionalOptions(
     tempDevDependency: string,
 ) {
     let dependency = tempDependency;
-    let devDependency = `${tempDevDependency} prettier`;
+    let devDependency = tempDevDependency;
 
     if (userInput.formatterAndLinter === "biome-prettier") {
         devDependency = `${devDependency} @biomejs/biome`;
     } else {
         devDependency = `${devDependency} eslint`;
         if (userInput.template === "express/ts") {
-            devDependency = `${devDependency} @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-prettier`;
+            devDependency = `${devDependency} @eslint/js @types/eslint__js typescript typescript-eslint eslint-plugin-prettier`;
         }
     }
 
@@ -29,15 +26,10 @@ function handleAdditionalOptions(
         }
     }
 
-    const installCmd = `${dependency} && ${devDependency}`;
-
-    console.log(
-        `${yellow("Installling dependencies...\ncommand ->")} ${bgCyan(
-            ` ${installCmd} `,
-        )}`,
-    );
-
-    return installCmd;
+    return {
+        updtDependencyCmd: dependency,
+        updtDevDependencyCmd: devDependency,
+    };
 }
 
 export default handleAdditionalOptions;

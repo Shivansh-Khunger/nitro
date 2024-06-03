@@ -209,7 +209,7 @@ export async function startUserInteraction() {
         ],
         {
             onCancel() {
-                console.log(red("program stopped keyboard interupt"));
+                console.log(`\n${red("Program stopped")}\nReason -: Keyboard interupt.`);
                 process.exit(1);
             },
         },

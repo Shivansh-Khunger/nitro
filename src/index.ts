@@ -7,10 +7,15 @@ import addDbAndOrm from "@helpers/db&Orms";
 import { makeDevEnv, makeProdEnv } from "@helpers/envMaker";
 import addFmtAndLinterConfig from "@helpers/fmt&Linters";
 import handleAdditionalOptions from "@helpers/handleOptions";
+import selectPkgManager from "@helpers/pkgManager";
+import printDependencies from "@helpers/printDependencies";
 import { parseArgs, startUserInteraction } from "@utils/cli";
 import handleError, { makeTargetPath } from "@utils/errorHandler";
-
 import { renameFile } from "@utils/fileSystem";
+
+// Import external Module(s)
+import { gray, lightBlue, red } from "kolorist";
+
 // Import necessary Type(s)
 import type {
     T_Arg_HandleArgs,
@@ -18,18 +23,10 @@ import type {
 } from "./types/dependencyInstallers";
 import type { T_UserInput } from "./types/prompt";
 
-let filePathArr: string[];
-export let projectDirPath: string;
-
-if (process.platform === "win32") {
-    filePathArr = __dirname.split("\\");
-    filePathArr.pop();
-    projectDirPath = filePathArr.join("\\");
-} else {
-    filePathArr = __dirname.split("/");
-    filePathArr.pop();
-    projectDirPath = filePathArr.join("/");
-}
+const sysPathDisapator = process.platform === "win32" ? "\\" : "/";
+const filePathArr = __dirname.split(sysPathDisapator);
+filePathArr.pop();
+export const projectDirPath = filePathArr.join(sysPathDisapator);
 
 (async () => {
     const parsedArgs = parseArgs();
@@ -46,6 +43,16 @@ if (process.platform === "win32") {
 function copyTemplate(targetPath: string, targetTemplate: string) {
     try {
         const templatePath = `${projectDirPath}/templates/${targetTemplate}`;
+        const exists = fs.existsSync(targetPath);
+
+        if (exists) {
+            console.log(
+                `\n${red(
+                    "Program stopped",
+                )}\nReason -: A directory with the same name exists.`,
+            );
+            process.exit(1);
+        }
 
         fs.cpSync(templatePath, targetPath, { recursive: true });
     } catch (err) {
@@ -74,8 +81,10 @@ function performRenames(targetPath: string) {
 }
 
 function installDependecies(targetPath: string, userInput: T_UserInput) {
-    const dependencyCmd = "npm i express pino pino-http pino-pretty";
-    let devDependencyCmd: string;
+    const pkgManagerInfo = selectPkgManager();
+
+    const dependencyCmd = `${pkgManagerInfo.prefix} express pino pino-http pino-pretty`;
+    let devDependencyCmd = "prettier";
 
     function handleArgs({
         dependencyCmd,
@@ -83,9 +92,13 @@ function installDependecies(targetPath: string, userInput: T_UserInput) {
         targetPath,
     }: T_Arg_HandleArgs) {
         const installCmd = `${dependencyCmd} && ${devDependencyCmd}`;
+
+        printDependencies(dependencyCmd, devDependencyCmd, pkgManagerInfo);
+
         try {
             execSync(installCmd, {
                 cwd: targetPath,
+                stdio: "inherit",
             });
         } catch (err) {
             handleError(err);
@@ -98,16 +111,22 @@ function installDependecies(targetPath: string, userInput: T_UserInput) {
         devDependencyCmd,
         targetPath,
     }: T_Arg_HandleCli) {
-        const installCmd = handleAdditionalOptions(
-            userInput,
-            dependencyCmd,
-            devDependencyCmd,
-        );
+        // these are updated dependency and devDependecy commands which include all the extra options
+        const { updtDependencyCmd, updtDevDependencyCmd } =
+            handleAdditionalOptions(userInput, dependencyCmd, devDependencyCmd);
 
         addFmtAndLinterConfig(
             userInput.formatterAndLinter,
             targetPath,
             projectDirPath,
+        );
+
+        const installCmd = `${updtDependencyCmd} && ${updtDevDependencyCmd}`;
+
+        printDependencies(
+            updtDependencyCmd,
+            updtDevDependencyCmd,
+            pkgManagerInfo,
         );
 
         try {
@@ -127,7 +146,7 @@ function installDependecies(targetPath: string, userInput: T_UserInput) {
     switch (userInput.template) {
         case "express/js":
             {
-                devDependencyCmd = "npm i --save-dev @dotenvx/dotenvx nodemon";
+                devDependencyCmd = `${pkgManagerInfo.devPrefix} ${devDependencyCmd} @dotenvx/dotenvx nodemon`;
 
                 if (userInput.type === "args") {
                     handleArgs({ dependencyCmd, devDependencyCmd, targetPath });
@@ -143,8 +162,7 @@ function installDependecies(targetPath: string, userInput: T_UserInput) {
             break;
         case "express/ts":
             {
-                devDependencyCmd =
-                    "npm i --save-dev tsx typescript @dotenvx/dotenvx @types/express @types/node";
+                devDependencyCmd = `${pkgManagerInfo.devPrefix} ${devDependencyCmd} tsx typescript @dotenvx/dotenvx @types/express @types/node`;
 
                 if (userInput.type === "args") {
                     handleArgs({ dependencyCmd, devDependencyCmd, targetPath });
@@ -174,4 +192,10 @@ function handleLogic(userInput: T_UserInput) {
     performRenames(targetPath);
     intialiseGitRepo(targetPath);
     installDependecies(targetPath, userInput);
+
+    console.log(
+        `\n${lightBlue("Project made at -:")} ${gray(
+            `${targetPath},`,
+        )} Hope you finish this one ;)`,
+    );
 }
