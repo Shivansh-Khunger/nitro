@@ -1,7 +1,7 @@
-# create-nitro <a href="https://www.npmjs.com/package/create-node-nitro"><img src="https://img.shields.io/npm/v/create-nitro" alt="npm package"></a>
+# create-nitro <a href="https://www.npmjs.com/package/create-nitro"><img src="https://img.shields.io/npm/v/create-nitro" alt="npm package"></a>
 
 <div align="center">
-<img src="https://i.ibb.co/YBfq0GH/nitro-logo.png" alt="nitro-logo" width="256" >
+<img src="https://i.ibb.co/YBfq0GH/nitro-logo.png" alt="nitro-logo" width="192" >
 </div>
 
 ## Scaffolding Your Node API's
