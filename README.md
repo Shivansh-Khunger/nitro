@@ -4,12 +4,6 @@
 <img src="https://i.ibb.co/YBfq0GH/nitro-logo.png" alt="nitro-logo" width="192" >
 </div>
 
-## Demo
-
-<div align="center">
-<img src="https://i.ibb.co/3m2m6Lw/ezgif-com-optimize.gif" alt="ezgif-com-optimize" border="0" width="256">
-</div>
-
 ## Scaffolding Your Node API's
 
 > **Compatibility Note:**
@@ -61,3 +55,5 @@ Currently supported template presets include:
 -   `express/ts`
 
 Note: For additional options, you would have to use the normal command mentioned prior.
+
+<img src="https://i.ibb.co/3m2m6Lw/ezgif-com-optimize.gif" alt="ezgif-com-optimize" border="0" width="256">
