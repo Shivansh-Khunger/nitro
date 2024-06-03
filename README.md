@@ -56,4 +56,7 @@ Currently supported template presets include:
 
 Note: For additional options, you would have to use the normal command mentioned prior.
 
-<img src="https://i.ibb.co/3m2m6Lw/ezgif-com-optimize.gif" alt="ezgif-com-optimize" border="0" width="256">
+<div align="center">
+<img src="https://i.ibb.co/3m2m6Lw/ezgif-com-optimize.gif" alt="ezgif-com-optimize" border="0" width="480">
+</div>
+
