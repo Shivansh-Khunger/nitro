@@ -1,17 +1,17 @@
 {
-    "name": "create-node-nitro",
-    "version": "0.1.0-beta.7",
+    "name": "create-nitro",
+    "version": "1.0.0",
     "description": "",
     "main": "index.js",
+    "license": "MIT",
     "scripts": {
         "build": "tspc",
         "dev": "tspc --watch",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node ./index.js",
         "pub": "npm run build && npm publish"
     },
     "bin": {
-        "create-node-nitro": "index.js"
+        "create-nitro": "index.js"
     },
     "files": [
         "dist/**",
