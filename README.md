@@ -1,15 +1,13 @@
-<div style="display: flex; align-items: center;">
-    <img src="https://i.ibb.co/YBfq0GH/nitro-logo.png" alt="nitro-logo" width="85" style="margin-right: 30px;">
-    <h1>
-        create-nitro 
-        <a href="https://www.npmjs.com/package/create-nitro">
-            <img src="https://img.shields.io/npm/v/create-nitro" alt="npm package">
-        </a>
-    </h1>
-</div>
+# create-nitro <a href="https://www.npmjs.com/package/create-nitro"><img src="https://img.shields.io/npm/v/create-nitro" alt="npm package"></a>
 
 <div align="center">
-    <img src="https://i.ibb.co/3m2m6Lw/ezgif-com-optimize.gif" alt="ezgif-com-optimize" border="0" width="360">
+<img src="https://i.ibb.co/YBfq0GH/nitro-logo.png" alt="nitro-logo" width="192" >
+</div>
+
+## Demo
+
+<div align="center">
+<img src="https://i.ibb.co/3m2m6Lw/ezgif-com-optimize.gif" alt="ezgif-com-optimize" border="0" width="256">
 </div>
 
 ## Scaffolding Your Node API's
