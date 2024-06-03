@@ -6,7 +6,9 @@ import { bold, green, lightRed } from "kolorist";
 const cwd = process.cwd();
 let targetPath: string;
 export function makeTargetPath(userInputDirName: string) {
-    targetPath = `${cwd}/${userInputDirName}`;
+    targetPath = `${cwd}${
+        process.platform === "win32" ? "\\" : "/"
+    }${userInputDirName}`;
 
     return targetPath;
 }
